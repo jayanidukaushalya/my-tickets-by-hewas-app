@@ -63,18 +63,15 @@ public class PurchaseApiClientImpl implements PurchaseApiClient {
     }
 
     @Override
-    public void reserveTickets(String ticketId, int qty, String email, String firstName, String lastName, String token, ReservationCallback callback) {
-        // Create request based on whether user is authenticated or guest
+    public void reserveTicketsBulk(List<ReserveTicketsRequest.Item> items, String email, String firstName, String lastName, String phone, String token, ReservationCallback callback) {
         ReserveTicketsRequest request;
         String authHeader = null;
 
         if (token != null && !token.isEmpty()) {
-            // Authenticated user - no email/name required
-            request = new ReserveTicketsRequest(ticketId, qty);
+            request = new ReserveTicketsRequest(items, phone);
             authHeader = "Bearer " + token;
         } else {
-            // Guest user - email required, name optional
-            request = new ReserveTicketsRequest(ticketId, qty, email, firstName, lastName);
+            request = new ReserveTicketsRequest(items, email, firstName, lastName, phone);
         }
 
         apiService.reserveTickets(authHeader, request).enqueue(new Callback<ApiResponse<ReservationResponse>>() {
@@ -101,8 +98,8 @@ public class PurchaseApiClientImpl implements PurchaseApiClient {
     }
 
     @Override
-    public void confirmPurchase(String sessionId, String token, PurchaseCallback callback) {
-        ConfirmPurchaseRequest request = new ConfirmPurchaseRequest(sessionId);
+    public void confirmPurchases(List<String> sessionIds, String token, PurchaseCallback callback) {
+        ConfirmPurchaseRequest request = new ConfirmPurchaseRequest(sessionIds);
         String authHeader = (token != null && !token.isEmpty()) ? "Bearer " + token : null;
 
         apiService.confirmPurchase(authHeader, request).enqueue(new Callback<ApiResponse<PurchaseResponse>>() {
@@ -110,7 +107,7 @@ public class PurchaseApiClientImpl implements PurchaseApiClient {
             public void onResponse(@NonNull Call<ApiResponse<PurchaseResponse>> call, @NonNull Response<ApiResponse<PurchaseResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ApiResponse<PurchaseResponse> apiResponse = response.body();
-                    if (apiResponse.isSuccess() && apiResponse.getData() != null) {
+                    if (apiResponse.isSuccess()) {
                         callback.onSuccess(apiResponse.getData());
                     } else {
                         String errorMessage = apiResponse.getError() != null ? apiResponse.getError() : "Failed to confirm purchase";

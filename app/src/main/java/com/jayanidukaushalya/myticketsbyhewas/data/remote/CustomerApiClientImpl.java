@@ -3,9 +3,9 @@ package com.jayanidukaushalya.myticketsbyhewas.data.remote;
 import androidx.annotation.NonNull;
 
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ApiResponse;
-import com.jayanidukaushalya.myticketsbyhewas.data.model.CreateCustomerRequest;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Customer;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.LinkCustomerRequest;
+import com.jayanidukaushalya.myticketsbyhewas.data.model.UpdateCustomerRequest;
 import com.jayanidukaushalya.myticketsbyhewas.BuildConfig;
 
 import okhttp3.OkHttpClient;
@@ -56,33 +56,6 @@ public class CustomerApiClientImpl implements CustomerApiClient {
     }
 
     @Override
-    public void createCustomer(String firebaseUid, String email, String firstName, String lastName, CustomerCallback callback) {
-        CreateCustomerRequest request = new CreateCustomerRequest(firebaseUid, email, firstName, lastName);
-
-        apiService.createCustomer(request).enqueue(new Callback<ApiResponse<Customer>>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse<Customer>> call, @NonNull Response<ApiResponse<Customer>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<Customer> apiResponse = response.body();
-                    if (apiResponse.isSuccess() && apiResponse.getData() != null) {
-                        callback.onSuccess(apiResponse.getData());
-                    } else {
-                        String errorMessage = apiResponse.getError() != null ? apiResponse.getError() : "Failed to create customer";
-                        callback.onFailure(errorMessage);
-                    }
-                } else {
-                    callback.onFailure(getErrorMessage(response.code()));
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ApiResponse<Customer>> call, @NonNull Throwable t) {
-                callback.onFailure("Network error: " + t.getMessage());
-            }
-        });
-    }
-
-    @Override
     public void getCustomerByUid(String token, CustomerCallback callback) {
         String authHeader = "Bearer " + token;
 
@@ -110,9 +83,9 @@ public class CustomerApiClientImpl implements CustomerApiClient {
     }
 
     @Override
-    public void linkCustomerToFirebaseUid(String email, String token, CustomerCallback callback) {
+    public void linkCustomerToFirebaseUid(String email, String firstName, String lastName, String token, CustomerCallback callback) {
         String authHeader = "Bearer " + token;
-        LinkCustomerRequest request = new LinkCustomerRequest(email);
+        LinkCustomerRequest request = new LinkCustomerRequest(email, firstName, lastName);
 
         apiService.linkCustomerToFirebaseUid(authHeader, request).enqueue(new Callback<ApiResponse<Customer>>() {
             @Override
@@ -124,6 +97,33 @@ public class CustomerApiClientImpl implements CustomerApiClient {
                     } else {
                         String errorMessage = apiResponse.getError() != null ? apiResponse.getError() : "Failed to link customer";
                         callback.onFailure(errorMessage);
+                    }
+                } else {
+                    callback.onFailure(getErrorMessage(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Customer>> call, @NonNull Throwable t) {
+                callback.onFailure("Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void updateCustomerProfile(String token, String firstName, String lastName, String phone, CustomerCallback callback) {
+        String authHeader = "Bearer " + token;
+        UpdateCustomerRequest request = new UpdateCustomerRequest(firstName, lastName, phone);
+        apiService.updateCustomerProfile(authHeader, request).enqueue(new Callback<ApiResponse<Customer>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Customer>> call, @NonNull Response<ApiResponse<Customer>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<Customer> apiResponse = response.body();
+                    if (apiResponse.isSuccess() && apiResponse.getData() != null) {
+                        callback.onSuccess(apiResponse.getData());
+                    } else {
+                        String err = apiResponse.getError() != null ? apiResponse.getError() : "Failed to update profile";
+                        callback.onFailure(err);
                     }
                 } else {
                     callback.onFailure(getErrorMessage(response.code()));

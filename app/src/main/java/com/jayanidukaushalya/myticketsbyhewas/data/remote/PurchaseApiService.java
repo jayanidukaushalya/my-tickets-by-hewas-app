@@ -27,7 +27,7 @@ public interface PurchaseApiService {
      * @param request Reservation request containing ticket ID, quantity, and optional customer info
      * @return API response containing the reservation details and session ID
      */
-    @POST("api/tickets/purchase/reserve")
+    @POST("tickets/purchase/reserve")
     Call<ApiResponse<ReservationResponse>> reserveTickets(
             @Header("Authorization") String authToken,
             @Body ReserveTicketsRequest request
@@ -41,7 +41,7 @@ public interface PurchaseApiService {
      * @param request Confirmation request containing the session ID
      * @return API response containing the confirmed purchase details
      */
-    @POST("api/tickets/purchase/confirm")
+    @POST("tickets/purchase/confirm")
     Call<ApiResponse<PurchaseResponse>> confirmPurchase(
             @Header("Authorization") String authToken,
             @Body ConfirmPurchaseRequest request
@@ -54,7 +54,7 @@ public interface PurchaseApiService {
      * @param authToken Bearer token for authentication
      * @return API response containing the list of purchases
      */
-    @GET("api/purchases/history")
+    @GET("tickets/purchase")
     Call<ApiResponse<ApiListData<Purchase>>> getPurchaseHistory(
             @Header("Authorization") String authToken
     );

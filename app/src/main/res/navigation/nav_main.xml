@@ -27,6 +27,23 @@
         <argument
             android:name="eventId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_event_detail_to_checkout"
+            app:destination="@id/nav_checkout"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_checkout"
+        android:name="com.jayanidukaushalya.myticketsbyhewas.ui.events.CheckoutFragment"
+        android:label="@string/title_checkout"
+        tools:layout="@layout/fragment_checkout">
+        <argument
+            android:name="ticketsJson"
+            app:argType="string" />
     </fragment>
 
     <fragment

@@ -1,6 +1,8 @@
 package com.jayanidukaushalya.myticketsbyhewas.ui.events;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,6 +44,7 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
     private FragmentEventDetailBinding binding;
     private EventViewModel viewModel;
     private Event currentEvent;
+    private LatLng venueLatLng;
 
     @Nullable
     @Override
@@ -55,6 +59,11 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(EventViewModel.class);
+        getChildFragmentManager().setFragmentResultListener(
+                TicketSelectionBottomSheet.RESULT_KEY,
+                getViewLifecycleOwner(),
+                (requestKey, result) -> navigateToCheckout(result)
+        );
         setupToolbar();
         observeViewModel();
         loadEventFromArgs();
@@ -222,12 +231,39 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
             return;
         }
         LatLng venueLocation = new LatLng(lat, lng);
+        venueLatLng = venueLocation;
         googleMap.addMarker(new MarkerOptions()
                 .position(venueLocation)
                 .title(currentEvent.getVenueName())
         );
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(venueLocation, 15f));
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
+
+        if (binding != null) {
+            binding.buttonOpenInMaps.setVisibility(View.VISIBLE);
+            binding.buttonOpenInMaps.setOnClickListener(v -> openInExternalMaps());
+        }
+    }
+
+    private void openInExternalMaps() {
+        if (venueLatLng == null || currentEvent == null || currentEvent.getLocation() == null) {
+            return;
+        }
+        String label = currentEvent.getVenueName();
+        if (label == null || label.isEmpty()) {
+            label = currentEvent.getLocation().getAddress();
+        }
+        if (label == null) {
+            label = "";
+        }
+        String uriString = "geo:" + venueLatLng.latitude + "," + venueLatLng.longitude +
+                "?q=" + Uri.encode(venueLatLng.latitude + "," + venueLatLng.longitude + " (" + label + ")");
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+        intent.setPackage("com.google.android.apps.maps");
+        if (intent.resolveActivity(requireContext().getPackageManager()) == null) {
+            intent.setPackage(null);
+        }
+        startActivity(intent);
     }
 
     // ── Buy flow ─────────────────────────────────────────────────────────────
@@ -236,6 +272,15 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
         if (currentEvent == null) return;
         TicketSelectionBottomSheet sheet = TicketSelectionBottomSheet.newInstance();
         sheet.show(getChildFragmentManager(), TicketSelectionBottomSheet.TAG);
+    }
+
+    private void navigateToCheckout(Bundle selection) {
+        Bundle args = new Bundle();
+        args.putString("ticketsJson", selection.getString("ticketsJson"));
+        NavHostFragment.findNavController(this).navigate(
+                R.id.action_event_detail_to_checkout,
+                args
+        );
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

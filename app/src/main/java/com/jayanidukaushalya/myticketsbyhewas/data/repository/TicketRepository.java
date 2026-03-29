@@ -31,7 +31,7 @@ public class TicketRepository {
             @Nullable Runnable onComplete
     ) {
         retrofitClient.getApiService()
-                .getUserTickets(userId, "Bearer " + authToken)
+                .getUserTickets( "Bearer " + authToken)
                 .enqueue(new Callback<ApiResponse<ApiListData<Ticket>>>() {
                     @Override
                     public void onResponse(

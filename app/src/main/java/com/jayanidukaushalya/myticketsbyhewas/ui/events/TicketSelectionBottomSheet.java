@@ -2,6 +2,8 @@ package com.jayanidukaushalya.myticketsbyhewas.ui.events;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -32,6 +34,7 @@ import java.util.Locale;
 public class TicketSelectionBottomSheet extends BottomSheetDialogFragment {
 
     public static final String TAG = "TicketSelectionBottomSheet";
+    public static final String RESULT_KEY = "ticket_selection_result";
 
     private static final int STEP_DATE   = 0;
     private static final int STEP_TIME   = 1;
@@ -246,10 +249,11 @@ public class TicketSelectionBottomSheet extends BottomSheetDialogFragment {
 
             row.buttonMinus.setOnClickListener(v -> {
                 TicketQuantity current = ticketQuantities.get(idx);
-                if (current.qty > 1) {
+                if (current.qty > 0) {
                     current.qty--;
                     row.textQty.setText(String.valueOf(current.qty));
-                    row.buttonMinus.setEnabled(current.qty > 1);
+                    row.buttonMinus.setEnabled(current.qty > 0);
+                    row.buttonPlus.setEnabled(current.qty < current.ticket.getQty());
                     refreshTotal();
                 }
             });
@@ -259,7 +263,8 @@ public class TicketSelectionBottomSheet extends BottomSheetDialogFragment {
                 if (current.qty < current.ticket.getQty()) {
                     current.qty++;
                     row.textQty.setText(String.valueOf(current.qty));
-                    row.buttonMinus.setEnabled(current.qty > 1);
+                    row.buttonMinus.setEnabled(current.qty > 0);
+                    row.buttonPlus.setEnabled(current.qty < current.ticket.getQty());
                     refreshTotal();
                 }
             });
@@ -300,17 +305,37 @@ public class TicketSelectionBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void onConfirmClicked() {
-        int totalQty = 0;
+        List<TicketQuantity> selectedTickets = new ArrayList<>();
         if (ticketQuantities != null) {
-            for (TicketQuantity tq : ticketQuantities) totalQty += tq.qty;
+            for (TicketQuantity tq : ticketQuantities) {
+                if (tq.qty > 0) {
+                    selectedTickets.add(tq);
+                }
+            }
         }
-        if (totalQty == 0) {
+
+        if (selectedTickets.isEmpty()) {
             Snackbar.make(binding.getRoot(), R.string.label_no_tickets_selected, Snackbar.LENGTH_SHORT).show();
             return;
         }
-        // PayHere integration placeholder
-        Snackbar.make(binding.getRoot(), R.string.label_payment_coming_soon, Snackbar.LENGTH_SHORT).show();
-        dismiss();
+
+        try {
+            JSONArray jsonArray = new JSONArray();
+            for (TicketQuantity tq : selectedTickets) {
+                JSONObject obj = new JSONObject();
+                obj.put("ticketId", tq.ticket.getId());
+                obj.put("ticketName", tq.ticket.getName());
+                obj.put("ticketPrice", tq.ticket.getPrice());
+                obj.put("qty", tq.qty);
+                jsonArray.put(obj);
+            }
+            Bundle result = new Bundle();
+            result.putString("ticketsJson", jsonArray.toString());
+            getParentFragmentManager().setFragmentResult(RESULT_KEY, result);
+            dismiss();
+        } catch (Exception e) {
+            Snackbar.make(binding.getRoot(), "Error preparing booking", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     // ── View helpers ─────────────────────────────────────────────────────────

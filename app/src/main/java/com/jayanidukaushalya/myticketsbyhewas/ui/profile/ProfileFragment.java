@@ -13,8 +13,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.jayanidukaushalya.myticketsbyhewas.R;
+import com.jayanidukaushalya.myticketsbyhewas.data.model.Customer;
+import com.jayanidukaushalya.myticketsbyhewas.databinding.DialogEditProfileBinding;
 import com.jayanidukaushalya.myticketsbyhewas.databinding.FragmentProfileBinding;
 import com.jayanidukaushalya.myticketsbyhewas.ui.auth.AuthActivity;
 import com.jayanidukaushalya.myticketsbyhewas.ui.events.TicketAdapter;
@@ -49,6 +53,7 @@ public class ProfileFragment extends Fragment {
                 bottomNav.setSelectedItemId(R.id.nav_events);
             }
         });
+        binding.buttonEditProfile.setOnClickListener(v -> showEditProfileDialog());
     }
 
     @Override
@@ -68,6 +73,9 @@ public class ProfileFragment extends Fragment {
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading ->
                 binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE)
         );
+        viewModel.getProfileCustomer().observe(getViewLifecycleOwner(), customer ->
+                renderProfileDetails(customer, viewModel.getCurrentUser().getValue())
+        );
         viewModel.getUserTickets().observe(getViewLifecycleOwner(), tickets -> {
             if (tickets == null || tickets.isEmpty()) {
                 binding.layoutNoTickets.setVisibility(View.VISIBLE);
@@ -76,6 +84,18 @@ public class ProfileFragment extends Fragment {
                 binding.layoutNoTickets.setVisibility(View.GONE);
                 binding.recyclerTickets.setVisibility(View.VISIBLE);
                 ticketAdapter.submitList(tickets);
+            }
+        });
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), message -> {
+            if (message != null && !message.isEmpty()) {
+                Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
+                viewModel.clearErrorMessage();
+            }
+        });
+        viewModel.getProfileSaveSuccess().observe(getViewLifecycleOwner(), success -> {
+            if (Boolean.TRUE.equals(success)) {
+                Snackbar.make(binding.getRoot(), R.string.label_profile_updated, Snackbar.LENGTH_SHORT).show();
+                viewModel.consumeProfileSaveSuccess();
             }
         });
     }
@@ -87,12 +107,76 @@ public class ProfileFragment extends Fragment {
         } else {
             binding.layoutNotLoggedIn.setVisibility(View.GONE);
             binding.layoutLoggedIn.setVisibility(View.VISIBLE);
-            binding.textUserName.setText(
-                    user.getDisplayName() != null ? user.getDisplayName() : "User"
-            );
-            binding.textUserEmail.setText(user.getEmail());
+            viewModel.loadCustomerProfile();
             viewModel.loadUserTickets();
+            renderProfileDetails(viewModel.getProfileCustomer().getValue(), user);
         }
+    }
+
+    private void renderProfileDetails(@Nullable Customer customer, @Nullable FirebaseUser user) {
+        if (user == null) {
+            return;
+        }
+        binding.textUserName.setText(formatDisplayName(customer, user));
+        String email = customer != null && customer.getEmail() != null && !customer.getEmail().isEmpty()
+                ? customer.getEmail()
+                : (user.getEmail() != null ? user.getEmail() : "");
+        binding.textUserEmail.setText(email);
+    }
+
+    @NonNull
+    private String formatDisplayName(@Nullable Customer customer, @NonNull FirebaseUser user) {
+        if (customer != null) {
+            String fn = customer.getFirstName() != null ? customer.getFirstName().trim() : "";
+            String ln = customer.getLastName() != null ? customer.getLastName().trim() : "";
+            String combined = (fn + " " + ln).trim();
+            if (!combined.isEmpty()) {
+                return combined;
+            }
+        }
+        if (user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {
+            return user.getDisplayName();
+        }
+        return getString(R.string.label_profile_placeholder_name);
+    }
+
+    private void showEditProfileDialog() {
+        DialogEditProfileBinding dialogBinding = DialogEditProfileBinding.inflate(getLayoutInflater());
+        Customer c = viewModel.getProfileCustomer().getValue();
+        if (c != null) {
+            if (c.getFirstName() != null) {
+                dialogBinding.editFirstName.setText(c.getFirstName());
+            }
+            if (c.getLastName() != null) {
+                dialogBinding.editLastName.setText(c.getLastName());
+            }
+            if (c.getPhone() != null) {
+                dialogBinding.editPhone.setText(c.getPhone());
+            }
+        } else {
+            FirebaseUser u = viewModel.getCurrentUser().getValue();
+            if (u != null && u.getDisplayName() != null && !u.getDisplayName().isEmpty()) {
+                String[] parts = u.getDisplayName().trim().split("\\s+", 2);
+                dialogBinding.editFirstName.setText(parts[0]);
+                if (parts.length > 1) {
+                    dialogBinding.editLastName.setText(parts[1]);
+                }
+            }
+        }
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.title_edit_profile)
+                .setView(dialogBinding.getRoot())
+                .setPositiveButton(R.string.action_save_profile, (d, w) -> {
+                    String fn = dialogBinding.editFirstName.getText() != null
+                            ? dialogBinding.editFirstName.getText().toString() : "";
+                    String ln = dialogBinding.editLastName.getText() != null
+                            ? dialogBinding.editLastName.getText().toString() : "";
+                    String phone = dialogBinding.editPhone.getText() != null
+                            ? dialogBinding.editPhone.getText().toString() : "";
+                    viewModel.updateCustomerProfile(fn, ln, phone);
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
     }
 
     private void openAuthActivity() {

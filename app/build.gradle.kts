@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.glide)
 
     implementation(libs.google.maps)
+    implementation("com.github.PayHereDevs:payhere-android-sdk:v3.0.17")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -20,6 +20,9 @@ public class Customer {
     @SerializedName("lastName")
     private String lastName;
 
+    @SerializedName("phone")
+    private String phone;
+
     @SerializedName("firebaseUid")
     private String firebaseUid;
 
@@ -33,11 +36,12 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(String id, String email, String firstName, String lastName, String firebaseUid, String createdAt, String updatedAt) {
+    public Customer(String id, String email, String firstName, String lastName, String phone, String firebaseUid, String createdAt, String updatedAt) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phone = phone;
         this.firebaseUid = firebaseUid;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -82,6 +86,14 @@ public class Customer {
 
     public void setFirebaseUid(String firebaseUid) {
         this.firebaseUid = firebaseUid;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getCreatedAt() {

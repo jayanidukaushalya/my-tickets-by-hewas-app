@@ -51,13 +51,12 @@ public interface ApiService {
             @Header("Authorization") String authToken
     );
 
-    @GET("tickets/user/{userId}")
+    @GET("tickets/purchase")
     Call<ApiResponse<ApiListData<Ticket>>> getUserTickets(
-            @Path("userId") String userId,
             @Header("Authorization") String authToken
     );
 
-    @POST("tickets/purchase")
+    @POST("tickets/purchase/reserve")
     Call<Ticket> purchaseTicket(
             @Body PurchaseRequest request,
             @Header("Authorization") String authToken

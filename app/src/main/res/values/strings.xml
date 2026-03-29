@@ -33,6 +33,7 @@
     <string name="label_tickets_available">Tickets Available</string>
     <string name="action_buy_tickets">Book Tickets</string>
     <string name="label_venue_map">Venue on Map</string>
+    <string name="action_open_in_maps">Open in Google Maps</string>
     <string name="label_free">Free</string>
     <string name="format_price">LKR %.2f</string>
     <string name="label_onwards">onwards</string>
@@ -48,6 +49,19 @@
     <string name="label_available_qty">%d available</string>
     <string name="label_no_tickets_selected">Please select at least one ticket.</string>
     <string name="label_payment_coming_soon">Payment integration coming soon!</string>
+    <string name="title_checkout">Checkout</string>
+    <string name="title_secure_checkout">Secure Checkout</string>
+    <string name="label_order_summary">Order Summary</string>
+    <string name="label_order_details">Order details</string>
+    <string name="label_contact_details">Contact details</string>
+    <string name="label_checkout_qty">Quantity: %1$d</string>
+    <string name="label_unit_price">Unit Price</string>
+    <string name="label_subtotal">Subtotal</string>
+    <string name="label_payment_info">Payment Information</string>
+    <string name="label_secure_checkout_notice">Secure checkout via PayHere</string>
+    <string name="label_secure_checkout_desc">Your transaction is encrypted and secure. We do not store your payment card details.</string>
+    <string name="action_pay_now">Pay Now</string>
+    <string name="action_pay_total">Pay %s Now</string>
 
     <!-- Profile screen -->
     <string name="title_profile">Profile</string>
@@ -57,6 +71,15 @@
     <string name="label_my_tickets">My Tickets</string>
     <string name="label_no_tickets">You haven\'t purchased any tickets yet.</string>
     <string name="label_browse_events">Browse Events</string>
+    <string name="label_profile_account">Account</string>
+    <string name="label_profile_placeholder_name">User</string>
+    <string name="action_edit_profile">Edit</string>
+    <string name="title_edit_profile">Edit name</string>
+    <string name="hint_first_name">First name</string>
+    <string name="hint_last_name">Last name</string>
+    <string name="hint_phone">Phone number</string>
+    <string name="action_save_profile">Save</string>
+    <string name="label_profile_updated">Profile updated</string>
 
     <!-- Auth -->
     <string name="title_sign_in">Sign In</string>
@@ -68,6 +91,7 @@
     <string name="label_no_account">Don\'t have an account?</string>
     <string name="label_already_account">Already have an account?</string>
     <string name="error_invalid_email">Please enter a valid email address.</string>
+    <string name="error_phone_required">Please enter a valid phone number.</string>
     <string name="error_password_too_short">Password must be at least 6 characters.</string>
     <string name="error_login_failed">Login failed. Please check your credentials.</string>
     <string name="action_continue_google">Continue with Google</string>

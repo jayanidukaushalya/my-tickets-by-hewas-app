@@ -9,17 +9,6 @@ import com.jayanidukaushalya.myticketsbyhewas.data.model.Customer;
 public interface CustomerApiClient {
 
     /**
-     * Create a new customer record linked to a Firebase UID.
-     *
-     * @param firebaseUid Firebase user ID
-     * @param email Customer email address
-     * @param firstName Customer first name (optional)
-     * @param lastName Customer last name (optional)
-     * @param callback Callback to handle success or failure
-     */
-    void createCustomer(String firebaseUid, String email, String firstName, String lastName, CustomerCallback callback);
-
-    /**
      * Get customer record for the authenticated user by Firebase UID.
      *
      * @param token Firebase ID token for authentication
@@ -31,10 +20,23 @@ public interface CustomerApiClient {
      * Link an existing guest customer record to a Firebase UID.
      *
      * @param email Customer email to link
+     * @param firstName First name (optional; required by API when linking)
+     * @param lastName Last name (optional; required by API when linking)
      * @param token Firebase ID token for authentication
      * @param callback Callback to handle success or failure
      */
-    void linkCustomerToFirebaseUid(String email, String token, CustomerCallback callback);
+    void linkCustomerToFirebaseUid(String email, String firstName, String lastName, String token, CustomerCallback callback);
+
+    /**
+     * Update the authenticated customer's first and last name.
+     *
+     * @param token Firebase ID token
+     * @param firstName First name
+     * @param lastName Last name
+     * @param phone Contact number
+     * @param callback Callback to handle success or failure
+     */
+    void updateCustomerProfile(String token, String firstName, String lastName, String phone, CustomerCallback callback);
 
     /**
      * Callback interface for customer API operations.

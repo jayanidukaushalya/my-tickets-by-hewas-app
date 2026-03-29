@@ -1,5 +1,6 @@
 package com.jayanidukaushalya.myticketsbyhewas.ui.events;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -186,14 +188,24 @@ public class EventsFragment extends Fragment implements EventAdapter.OnEventClic
         picker.addOnPositiveButtonClickListener(selection -> {
             if (selection != null) {
                 viewModel.setDateRange(selection.first, selection.second);
-                // Optionally visually indicate date filter is active
-                binding.buttonDateRange.setAlpha(1.0f);
+                // Highlight button when filter is active
+                binding.buttonDateRange.setIconTintResource(R.color.white);
+                binding.buttonDateRange.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.primary)));
             }
         });
 
         picker.addOnNegativeButtonClickListener(v -> {
             viewModel.clearDateRange();
-            binding.buttonDateRange.setAlpha(0.6f);
+            // Reset to default tonal look
+            binding.buttonDateRange.setIconTintResource(R.color.white);
+            binding.buttonDateRange.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.surface_variant)));
+        });
+
+        picker.addOnCancelListener(dialog -> {
+            // Optional: reset if they just dismiss without selection? 
+            // Usually we keep current state.
         });
 
         picker.show(getChildFragmentManager(), "DATE_RANGE_PICKER");

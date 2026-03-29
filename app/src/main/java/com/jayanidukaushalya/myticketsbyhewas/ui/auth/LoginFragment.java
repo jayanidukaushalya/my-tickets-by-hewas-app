@@ -72,8 +72,13 @@ public class LoginFragment extends Fragment {
         }
         showLoading(true);
         AuthActivity authActivity = (AuthActivity) requireActivity();
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        authActivity.launchGoogleSignIn(signInIntent, this::onGoogleSignInActivityResult);
+        googleSignInClient.signOut().addOnCompleteListener(requireActivity(), task -> {
+            if (!isAdded() || binding == null) {
+                return;
+            }
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            authActivity.launchGoogleSignIn(signInIntent, this::onGoogleSignInActivityResult);
+        });
     }
 
     private void onGoogleSignInActivityResult(ActivityResult result) {
