@@ -51,6 +51,27 @@ public class Event {
         return eventDates.get(0).getDate();
     }
 
+    /** Returns the ISO date string of the last unique event date, or null. */
+    public String getLastDate() {
+        List<String> unique = getUniqueDates();
+        if (unique.isEmpty()) return null;
+        return unique.get(unique.size() - 1);
+    }
+
+    private List<String> getUniqueDates() {
+        List<String> unique = new java.util.ArrayList<>();
+        if (eventDates == null) return unique;
+        for (EventDate d : eventDates) {
+            String dateOnly = d.getDate();
+            if (dateOnly != null) {
+                // Strip time if API returns full ISO for the date field
+                if (dateOnly.contains("T")) dateOnly = dateOnly.split("T")[0];
+                if (!unique.contains(dateOnly)) unique.add(dateOnly);
+            }
+        }
+        return unique;
+    }
+
     /** Returns the startTime of the first time slot of the first date, or null. */
     public String getFirstStartTime() {
         if (eventDates == null || eventDates.isEmpty()) return null;
@@ -91,4 +112,25 @@ public class Event {
     }
 
     public boolean isFree() { return getLowestPrice() <= 0; }
+
+    /** Returns true when there are 2+ distinct ticket prices across all dates and slots. */
+    public boolean hasMultiplePrices() {
+        if (eventDates == null) return false;
+        double firstPrice = -1;
+        for (EventDate date : eventDates) {
+            if (date.getTimeSlots() == null) continue;
+            for (EventTimeSlot slot : date.getTimeSlots()) {
+                if (slot.getTickets() == null) continue;
+                for (EventTicket ticket : slot.getTickets()) {
+                    double p = ticket.getPriceAsDouble();
+                    if (firstPrice < 0) {
+                        firstPrice = p;
+                    } else if (Math.abs(p - firstPrice) > 0.01) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

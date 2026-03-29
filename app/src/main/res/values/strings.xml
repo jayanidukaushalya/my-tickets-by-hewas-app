@@ -31,10 +31,23 @@
     <string name="label_venue">Venue</string>
     <string name="label_description">About</string>
     <string name="label_tickets_available">Tickets Available</string>
-    <string name="action_buy_tickets">Buy Tickets</string>
+    <string name="action_buy_tickets">Book Tickets</string>
     <string name="label_venue_map">Venue on Map</string>
     <string name="label_free">Free</string>
     <string name="format_price">LKR %.2f</string>
+    <string name="label_onwards">onwards</string>
+
+    <!-- Ticket selection bottom sheet -->
+    <string name="label_select_date">Select Date</string>
+    <string name="label_select_time_slot">Select Time Slot</string>
+    <string name="label_select_tickets">Select Tickets</string>
+    <string name="label_total">Total</string>
+    <string name="label_total_lkr_zero">LKR 0</string>
+    <string name="action_confirm_booking">Confirm Booking</string>
+    <string name="label_free_ticket">Free</string>
+    <string name="label_available_qty">%d available</string>
+    <string name="label_no_tickets_selected">Please select at least one ticket.</string>
+    <string name="label_payment_coming_soon">Payment integration coming soon!</string>
 
     <!-- Profile screen -->
     <string name="title_profile">Profile</string>

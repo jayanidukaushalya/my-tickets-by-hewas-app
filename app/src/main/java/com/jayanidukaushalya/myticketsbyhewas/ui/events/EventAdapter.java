@@ -11,10 +11,7 @@ import com.jayanidukaushalya.myticketsbyhewas.R;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Event;
 import com.jayanidukaushalya.myticketsbyhewas.databinding.ItemEventCardBinding;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -75,8 +72,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             if (category == null || category.isEmpty()) category = event.getScheduleType();
             binding.chipCategory.setText(category != null ? category.replace("_", " ") : "");
 
-            // Date — parse the ISO date from the first eventDate entry
-            binding.textEventDate.setText(formatDate(event.getFirstDate(), event.getFirstStartTime()));
+            // Date — formatted using the first and last dates (for range) and first slot
+            binding.textEventDate.setText(
+                    EventScheduleFormatter.formatDateTimeDisplay(
+                            event.getFirstDate(), 
+                            event.getLastDate(), 
+                            event.getFirstStartTime()));
 
             // Venue — nested location.venue
             String venue = event.getVenueName();
@@ -96,43 +97,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             binding.buttonBuy.setOnClickListener(v -> listener.onBuyClick(event));
         }
 
-        /**
-         * Formats an ISO-8601 date+time pair into a human-readable string.
-         * e.g. "Mar 25, 2026 • 10:30 AM"
-         */
-        private String formatDate(String isoDate, String isoTime) {
-            // Try to use the time field first as it carries the most precise info
-            String source = isoTime != null ? isoTime : isoDate;
-            if (source == null) return "";
-            try {
-                SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-                SimpleDateFormat outDate = new SimpleDateFormat("MMM d, yyyy", Locale.US);
-                SimpleDateFormat outTime = new SimpleDateFormat("h:mm a", Locale.US);
-                Date parsed = in.parse(source);
-                if (parsed == null) return source;
-                if (isoTime != null) {
-                    // If we have a date too, show both with bullet separator
-                    if (isoDate != null) {
-                        try {
-                            Date dateParsed = in.parse(isoDate);
-                            if (dateParsed != null) {
-                                return outDate.format(dateParsed) + " • " + outTime.format(parsed);
-                            }
-                        } catch (ParseException ignored) {}
-                    }
-                    return outTime.format(parsed);
-                }
-                return outDate.format(parsed);
-            } catch (ParseException e) {
-                return source;
-            }
-        }
-
         private String formatPrice(Event event) {
             if (event.isFree()) return "Free";
-            double p = event.getLowestPrice();
-            // Format with thousands separator: e.g. "LKR 50,000"
-            return String.format(Locale.US, "LKR %,.0f", p);
+            String price = String.format(Locale.US, "LKR %,.0f", event.getLowestPrice());
+            return event.hasMultiplePrices() ? "From " + price : price;
         }
     }
 }
