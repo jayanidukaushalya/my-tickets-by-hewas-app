@@ -29,6 +29,8 @@ public class EventViewModel extends AndroidViewModel {
     private String searchQuery     = null;
     private final List<String> eventTypeFilter = new ArrayList<>();
     private String scheduleTypeFilter = null;
+    private String dateFromFilter = null;
+    private String dateToFilter   = null;
 
     // ── Exposed LiveData ─────────────────────────────────────────────────────
     private final MutableLiveData<List<Event>> events       = new MutableLiveData<>(new ArrayList<>());
@@ -121,6 +123,23 @@ public class EventViewModel extends AndroidViewModel {
         refresh();
     }
 
+    /** Set a date range filter. Params are timestamps in ms. */
+    public void setDateRange(@Nullable Long startMs, @Nullable Long endMs) {
+        java.text.SimpleDateFormat sdf =
+            new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US);
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+
+        dateFromFilter = (startMs != null) ? sdf.format(new java.util.Date(startMs)) : null;
+        dateToFilter = (endMs != null) ? sdf.format(new java.util.Date(endMs)) : null;
+        refresh();
+    }
+
+    public void clearDateRange() {
+        dateFromFilter = null;
+        dateToFilter = null;
+        refresh();
+    }
+
     public void loadEventById(String eventId) {
         isLoading.setValue(true);
         errorMessage.setValue(null);
@@ -139,6 +158,8 @@ public class EventViewModel extends AndroidViewModel {
     public String getSearchQuery()                 { return searchQuery; }
     public List<String> getEventTypeFilter()       { return eventTypeFilter; }
     public String getScheduleTypeFilter()          { return scheduleTypeFilter; }
+    public String getDateFromFilter()              { return dateFromFilter; }
+    public String getDateToFilter()                { return dateToFilter; }
 
     // ── Internal ──────────────────────────────────────────────────────────────
     private void fetchPage(int page) {
@@ -147,6 +168,8 @@ public class EventViewModel extends AndroidViewModel {
                 searchQuery,
                 eventTypeFilter,
                 scheduleTypeFilter,
+                dateFromFilter,
+                dateToFilter,
                 pageSink,
                 totalSink,
                 errorMessage

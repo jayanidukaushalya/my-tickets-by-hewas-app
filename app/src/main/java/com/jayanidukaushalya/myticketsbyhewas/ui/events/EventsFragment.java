@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.chip.Chip;
 import com.jayanidukaushalya.myticketsbyhewas.R;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Event;
@@ -26,6 +27,7 @@ import com.jayanidukaushalya.myticketsbyhewas.databinding.FragmentEventsBinding;
 import com.jayanidukaushalya.myticketsbyhewas.viewmodel.EventViewModel;
 
 import java.util.List;
+import androidx.core.util.Pair;
 
 public class EventsFragment extends Fragment implements EventAdapter.OnEventClickListener {
 
@@ -60,6 +62,7 @@ public class EventsFragment extends Fragment implements EventAdapter.OnEventClic
         binding.swipeRefresh.setOnRefreshListener(() -> viewModel.refresh());
         binding.buttonRetry.setOnClickListener(v -> viewModel.refresh());
         binding.buttonRetryError.setOnClickListener(v -> viewModel.refresh());
+        binding.buttonDateRange.setOnClickListener(v -> showDateRangePicker());
 
         viewModel.refresh();
     }
@@ -152,6 +155,48 @@ public class EventsFragment extends Fragment implements EventAdapter.OnEventClic
             }
             viewModel.setScheduleTypeFilter(activeScheduleType);
         });
+    }
+
+    @Nullable
+    private static String mapChipIdToEventType(int chipId) {
+        if (chipId == R.id.chip_filter_conference) {
+            return "conference";
+        }
+        if (chipId == R.id.chip_filter_festival) {
+            return "festival";
+        }
+        if (chipId == R.id.chip_filter_concert) {
+            return "concert";
+        }
+        if (chipId == R.id.chip_filter_sport) {
+            return "sport";
+        }
+        if (chipId == R.id.chip_filter_exhibition) {
+            return "exhibition";
+        }
+        return null;
+    }
+
+    private void showDateRangePicker() {
+        MaterialDatePicker<Pair<Long, Long>> picker = MaterialDatePicker.Builder.dateRangePicker()
+                .setTitleText("Select Date Range")
+                .setTheme(com.google.android.material.R.style.ThemeOverlay_Material3_MaterialCalendar)
+                .build();
+
+        picker.addOnPositiveButtonClickListener(selection -> {
+            if (selection != null) {
+                viewModel.setDateRange(selection.first, selection.second);
+                // Optionally visually indicate date filter is active
+                binding.buttonDateRange.setAlpha(1.0f);
+            }
+        });
+
+        picker.addOnNegativeButtonClickListener(v -> {
+            viewModel.clearDateRange();
+            binding.buttonDateRange.setAlpha(0.6f);
+        });
+
+        picker.show(getChildFragmentManager(), "DATE_RANGE_PICKER");
     }
 
     private void uncheckScheduleTypeChips(int exceptId) {

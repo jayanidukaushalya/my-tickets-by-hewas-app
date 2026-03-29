@@ -42,6 +42,8 @@ public class EventRepository {
             @Nullable String search,
             @Nullable java.util.List<String> eventType,
             @Nullable String scheduleType,
+            @Nullable String dateFrom,
+            @Nullable String dateTo,
             MutableLiveData<List<Event>> eventsData,
             MutableLiveData<Integer> totalData,
             MutableLiveData<String> errorData
@@ -52,8 +54,8 @@ public class EventRepository {
                 PAGE_SIZE,
                 eventType != null && eventType.isEmpty() ? null : eventType,
                 nullIfEmpty(scheduleType),
-                null, // dateFrom
-                null, // dateTo
+                nullIfEmpty(dateFrom),
+                nullIfEmpty(dateTo),
                 null, // field
                 null  // order
         ).enqueue(new Callback<ApiResponse<ApiListData<Event>>>() {

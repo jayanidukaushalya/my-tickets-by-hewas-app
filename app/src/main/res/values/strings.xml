@@ -13,6 +13,8 @@
     <string name="label_loading_events">Loading events…</string>
     <string name="action_retry">Retry</string>
     <string name="hint_search_events">Search events…</string>
+    <string name="hint_date_range">Filter by date</string>
+    <string name="title_select_date_range">Select Date Range</string>
 
     <!-- Filter chip labels -->
     <string name="filter_conference">Conference</string>

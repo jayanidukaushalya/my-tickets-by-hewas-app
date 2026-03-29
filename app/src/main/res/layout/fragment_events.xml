@@ -24,38 +24,61 @@
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
             app:titleTextColor="@color/white" />
 
-        <!-- Search bar — FilledBox style matching auth screens -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_layout_search"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+        <!-- Search & Date Row -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/spacing_md"
-            android:layout_marginBottom="@dimen/spacing_sm"
-            android:hint="@string/hint_search_events"
-            app:boxBackgroundColor="@color/surface_variant"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeColor="@color/outline"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="2dp"
-            app:hintTextColor="?attr/colorOnSurfaceVariant"
-            app:startIconDrawable="@drawable/ic_search"
-            app:endIconMode="clear_text">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/spacing_md"
+            android:layout_marginBottom="@dimen/spacing_sm">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_search"
-                android:layout_width="match_parent"
+            <!-- Search bar — FilledBox style matching auth screens -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_search"
+                style="@style/Widget.Material3.TextInputLayout.FilledBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1"
-                android:textColor="@color/white"
-                android:textColorHint="?attr/colorOnSurfaceVariant" />
+                android:layout_weight="1"
+                android:hint="@string/hint_search_events"
+                app:boxBackgroundColor="@color/surface_variant"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/outline"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="2dp"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:startIconDrawable="@drawable/ic_search"
+                app:endIconMode="clear_text">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textColorHint="?attr/colorOnSurfaceVariant" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Date range trigger -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_date_range"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="@dimen/spacing_sm"
+                app:icon="@drawable/ic_calendar"
+                app:iconSize="24dp"
+                app:iconTint="@color/white"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+                android:contentDescription="@string/hint_date_range" />
+
+        </LinearLayout>
 
         <!-- Horizontal filter chip row -->
         <HorizontalScrollView
