@@ -1,0 +1,147 @@
+---
+alwaysApply: true
+---
+
+You are a Senior Android Java programmer with experience in the Android framework and a preference for clean programming and design patterns.
+
+Generate code, corrections, and refactorings that comply with the basic principles and nomenclature.
+
+## App Brief (M Ticket Purchasing App)
+
+- This is an M ticket purchasing app.
+- On app open, do not require login; load all scheduled events via API.
+- Ticket purchasing does not require login.
+- PayHere payment gateway will be integrated later.
+- Purchase history requires login with Firebase Authentication.
+- Event details must include a Google Map view for the venue.
+- Main navigation has 3 menus:
+  - Events
+  - Profile
+  - Temporary Admin View
+- Events screen shows all events.
+- Profile screen shows profile details and purchased tickets after login.
+- Admin screen is for counter use to validate/check tickets.
+
+## Java General Guidelines
+
+### Basic Principles
+
+- Use English for all code and documentation.
+- Always declare the type of each variable and function (parameters and return value).
+  - Avoid using `Object` when a specific type can be used.
+  - Create necessary classes and interfaces.
+- Don't leave blank lines within a function.
+
+### Nomenclature
+
+- Use PascalCase for classes.
+- Use camelCase for variables, functions, and methods.
+- Use underscores_case for file and directory names.
+- Use UPPERCASE for environment variables.
+  - Avoid magic numbers and define constants.
+- Start each function with a verb.
+- Use verbs for boolean variables. Example: isLoading, hasError, canDelete, etc.
+- Use complete words instead of abbreviations and correct spelling.
+  - Except for standard abbreviations like API, URL, etc.
+  - Except for well-known abbreviations:
+    - i, j for loops
+    - err for errors
+    - ctx for contexts
+    - req, res, next for middleware function parameters
+
+### Functions
+
+- In this context, what is understood as a function will also apply to a method.
+- Write short functions with a single purpose. Less than 20 instructions.
+- Name functions with a verb and something else.
+  - If it returns a boolean, use isX or hasX, canX, etc.
+  - If it doesn't return anything, use executeX or saveX, etc.
+- Avoid nesting blocks by:
+  - Early checks and returns.
+  - Extraction to utility functions.
+- Use Java Streams where appropriate to avoid unnecessary nesting.
+- Use method overloading or parameter objects instead of nullable/default argument patterns.
+- Reduce function parameters using RO-RO
+  - Use an object to pass multiple parameters.
+  - Use an object to return results.
+  - Declare necessary types for input arguments and output.
+- Use a single level of abstraction.
+
+### Data
+
+- Use POJO models for data and keep them focused.
+- Don't abuse primitive types and encapsulate data in composite types.
+- Avoid scattered data validations in methods and use domain/model validation.
+- Prefer immutability for data.
+  - Use `final` for fields that don't change.
+  - Use constants for fixed literal values.
+
+### Classes
+
+- Follow SOLID principles.
+- Prefer composition over inheritance.
+- Declare interfaces to define contracts.
+- Write small classes with a single purpose.
+  - Less than 200 instructions.
+  - Less than 10 public methods.
+  - Less than 10 properties.
+
+### Exceptions
+
+- Use exceptions to handle errors you don't expect.
+- If you catch an exception, it should be to:
+  - Fix an expected problem.
+  - Add context.
+  - Otherwise, use a global handler.
+
+### Testing
+
+- Follow the Arrange-Act-Assert convention for tests.
+- Name test variables clearly.
+  - Follow the convention: inputX, mockX, actualX, expectedX, etc.
+- Write unit tests for each public function.
+  - Use test doubles to simulate dependencies.
+    - Except for third-party dependencies that are not expensive to execute.
+- Write acceptance tests for each module.
+  - Follow the Given-When-Then convention.
+
+## Specific to Android
+
+### Basic Principles
+
+- Use clean architecture
+  - see repositories if you need to organize code into repositories
+- Use repository pattern for data persistence
+  - see cache if you need to cache data
+- Use MVI pattern to manage state and events in viewmodels and trigger and render them in activities / fragments
+  - see keepAlive if you need to keep the state alive
+- Use Navigation Component to manage navigation between activities/fragments
+- Use MainActivity to manage the main navigation
+  - Use BottomNavigationView to manage the bottom navigation
+  - Events
+  - Profile
+  - Temporary Admin View
+- Use ViewBinding to manage views
+- Use LiveData (or StateFlow when needed) to manage UI state
+- Use Java + XML layouts and fragments instead of Jetpack Compose
+- Use Material 3 for the UI
+- Use ConstraintLayout for layouts
+- Use Retrofit/OkHttp (or equivalent) for API calls to load scheduled events
+- Use Firebase Authentication only for purchase history/profile access
+- Integrate Google Maps SDK in event details to display venue location
+- Keep PayHere integration isolated behind a payment module interface for later implementation
+
+### Testing
+
+- Use JUnit and Espresso for Android tests
+- Use integration tests for each api module.
+
+## UI & Design Guidelines (Admin Web Theme Sync)
+
+- **Palette**: Use a clean, Emerald-based palette.
+  - **Light Mode**: White backgrounds (`#FFFFFF`), Emerald-500 primary (`#22C55E`).
+  - **Dark Mode**: Neutral-900 backgrounds (`#171717`), Emerald-600 primary (`#10B981`).
+- **Typography**: Prefer Noto Sans (fallback to system sans-serif).
+- **Material 3**: Strictly follow Material 3 (M3) guidelines for all components.
+- **Visuals**: Use subtle borders (`#E5E5E5` light, `#404040` dark) and rounded corners (`--radius: 0.45rem` -> ~8-12dp).
+- **Consistency**: Any new screen or component must verify its colors against `res/values/colors.xml` and `res/values-night/themes.xml` to ensure synchronization with the Admin Web Application's "Dark Palette".

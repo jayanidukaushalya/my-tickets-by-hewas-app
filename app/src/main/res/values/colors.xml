@@ -1,10 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!--
+        Color System — Dark Theme
+        Inspired by the Admin Web App reference: pure black base, rich green primary.
+
+        Layer hierarchy (darkest to lightest):
+          background     #0F0F0F  – true near-black page background
+          surface        #1A1A1A  – card / AppBar surfaces
+          surface_variant #242424 – input field fill, elevated containers
+          surface_bright  #2E2E2E – hover / pressed states, chips
+    -->
+
+    <!-- ── Background ─────────────────────────────────────────────── -->
+    <color name="background">#0F0F0F</color>
+    <color name="on_background">#F0F0F0</color>
+
+    <!-- ── Surfaces ──────────────────────────────────────────────── -->
+    <!-- Cards, AppBar, BottomNav -->
+    <color name="surface">#1A1A1A</color>
+    <color name="on_surface">#F0F0F0</color>
+
+    <!-- Input fields, chips, secondary containers -->
+    <color name="surface_variant">#242424</color>
+    <color name="on_surface_variant">#8A8A8A</color>
+
+    <!-- Subtle tonal surface (slightly lighter than surface_variant) -->
+    <color name="surface_bright">#2E2E2E</color>
+
+    <!-- ── Outline / Divider ──────────────────────────────────────── -->
+    <!-- 18% white — visible but not harsh borders -->
+    <color name="outline">#2EFFFFFF</color>
+    <!-- 10% white — very subtle dividers -->
+    <color name="outline_variant">#1AFFFFFF</color>
+
+    <!-- ── Primary (Green) ───────────────────────────────────────── -->
+    <!-- Rich forest green — the key brand accent -->
+    <color name="primary">#4A7C2F</color>
+    <!-- White text on primary buttons -->
+    <color name="on_primary">#FFFFFF</color>
+    <!-- Pressed / tonal variant of primary -->
+    <color name="primary_container">#1E3A11</color>
+    <color name="on_primary_container">#B8E08A</color>
+
+    <!-- ── Secondary (Neutral Dark) ──────────────────────────────── -->
+    <!-- Was blueish-purple — now a clean neutral to match the palette -->
+    <color name="secondary">#3A3A3A</color>
+    <color name="on_secondary">#F0F0F0</color>
+    <color name="secondary_container">#2A2A2A</color>
+    <color name="on_secondary_container">#D8D8D8</color>
+
+    <!-- ── Error ─────────────────────────────────────────────────── -->
+    <color name="error">#E8694E</color>
+    <color name="on_error">#3B0A00</color>
+    <color name="error_container">#7A1C05</color>
+    <color name="on_error_container">#FFDAD6</color>
+
+    <!-- ── Tertiary (for admin valid ticket) ─────────────────────── -->
+    <color name="tertiary_container">#1E3A11</color>
+    <color name="on_tertiary_container">#B8E08A</color>
+
+    <!-- ── Semantic ───────────────────────────────────────────────── -->
+    <color name="ticket_valid">#4A7C2F</color>
+    <color name="ticket_used">#8A8A8A</color>
+    <color name="ticket_expired">#E8694E</color>
+    <color name="price_gold">#D4A520</color>
+    <color name="overlay_dark">#99000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
 </resources>

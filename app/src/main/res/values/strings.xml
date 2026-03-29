@@ -1,3 +1,75 @@
 <resources>
     <string name="app_name">My Tickets by Hewas</string>
+
+    <!-- Navigation -->
+    <string name="nav_events">Events</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_admin">Admin</string>
+
+    <!-- Events screen -->
+    <string name="title_events">Events</string>
+    <string name="label_upcoming_events">Upcoming Events</string>
+    <string name="label_no_events">No events available right now.\nCheck back soon!</string>
+    <string name="label_loading_events">Loading events…</string>
+    <string name="action_retry">Retry</string>
+
+    <!-- Event detail -->
+    <string name="title_event_detail">Event Details</string>
+    <string name="label_date_time">Date &amp; Time</string>
+    <string name="label_venue">Venue</string>
+    <string name="label_description">About</string>
+    <string name="label_tickets_available">Tickets Available</string>
+    <string name="action_buy_tickets">Buy Tickets</string>
+    <string name="label_venue_map">Venue on Map</string>
+    <string name="label_free">Free</string>
+    <string name="format_price">LKR %.2f</string>
+
+    <!-- Profile screen -->
+    <string name="title_profile">Profile</string>
+    <string name="label_sign_in_prompt">Sign in to view your purchase history and manage your tickets.</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="action_sign_out">Sign Out</string>
+    <string name="label_my_tickets">My Tickets</string>
+    <string name="label_no_tickets">You haven\'t purchased any tickets yet.</string>
+    <string name="label_browse_events">Browse Events</string>
+
+    <!-- Auth -->
+    <string name="title_sign_in">Sign In</string>
+    <string name="hint_email">Email address</string>
+    <string name="hint_password">Password</string>
+    <string name="action_login">Login</string>
+    <string name="action_register">Create Account</string>
+    <string name="label_forgot_password">Forgot Password?</string>
+    <string name="label_no_account">Don\'t have an account?</string>
+    <string name="label_already_account">Already have an account?</string>
+    <string name="error_invalid_email">Please enter a valid email address.</string>
+    <string name="error_password_too_short">Password must be at least 6 characters.</string>
+    <string name="error_login_failed">Login failed. Please check your credentials.</string>
+    <string name="action_continue_google">Continue with Google</string>
+    <string name="label_divider_or">OR</string>
+
+    <!-- Admin screen -->
+    <string name="title_admin">Admin — Ticket Check</string>
+    <string name="label_admin_description">Scan or enter a ticket ID to validate entry.</string>
+    <string name="hint_ticket_id">Enter Ticket ID</string>
+    <string name="action_validate">Validate Ticket</string>
+    <string name="action_scan_qr">Scan QR Code</string>
+    <string name="label_ticket_valid">✓ Valid — Entry Permitted</string>
+    <string name="label_ticket_used">✗ Already Used</string>
+    <string name="label_ticket_expired">✗ Ticket Expired</string>
+    <string name="label_ticket_not_found">Ticket not found</string>
+    <string name="label_awaiting_scan">Awaiting ticket scan or ID…</string>
+
+    <!-- Ticket item -->
+    <string name="label_ticket_status_valid">Valid</string>
+    <string name="label_ticket_status_used">Used</string>
+    <string name="label_ticket_status_expired">Expired</string>
+    <string name="label_purchased_on">Purchased: %s</string>
+
+    <!-- Generic -->
+    <string name="label_error">Something went wrong. Please try again.</string>
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="content_desc_event_image">Event banner image</string>
+    <string name="content_desc_profile_photo">Profile photo</string>
 </resources>
