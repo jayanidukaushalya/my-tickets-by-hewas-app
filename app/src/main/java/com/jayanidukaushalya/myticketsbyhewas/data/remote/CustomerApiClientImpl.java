@@ -6,6 +6,7 @@ import com.jayanidukaushalya.myticketsbyhewas.data.model.ApiResponse;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.CreateCustomerRequest;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Customer;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.LinkCustomerRequest;
+import com.jayanidukaushalya.myticketsbyhewas.BuildConfig;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -21,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class CustomerApiClientImpl implements CustomerApiClient {
 
-    private static final String BASE_URL = "https://api.myticketsbyhewas.com/";
+    private static final String BASE_URL = BuildConfig.API_BASE_URL;
     private static CustomerApiClientImpl instance;
     private final CustomerApiService apiService;
 

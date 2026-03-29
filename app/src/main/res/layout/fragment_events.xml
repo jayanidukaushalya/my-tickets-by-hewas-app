@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
 
+    <!-- ── App bar with toolbar + search + filter chips ─────────────────── -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -13,6 +14,7 @@
         app:elevation="0dp"
         app:liftOnScroll="true">
 
+        <!-- Title row -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -22,8 +24,117 @@
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
             app:titleTextColor="@color/white" />
 
+        <!-- Search bar — FilledBox style matching auth screens -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_search"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_md"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:hint="@string/hint_search_events"
+            app:boxBackgroundColor="@color/surface_variant"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeColor="@color/outline"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorOnSurfaceVariant"
+            app:startIconDrawable="@drawable/ic_search"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textColorHint="?attr/colorOnSurfaceVariant" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Horizontal filter chip row -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:paddingHorizontal="@dimen/spacing_md"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_filters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:selectionRequired="false"
+                app:singleSelection="false">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_conference"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_conference"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_festival"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_festival"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_concert"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_concert"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_sport"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_sport"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_exhibition"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_exhibition"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_single_day"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_single_day"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_filter_multi_day"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_multi_day"
+                    android:textColor="@color/white" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- ── Swipe-to-refresh wrapping the RecyclerView ───────────────────── -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
@@ -35,12 +146,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:paddingTop="@dimen/spacing_sm"
+            android:paddingBottom="80dp"
             android:visibility="gone" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <!-- ── Initial load spinner (centred, shown before first data) ────── -->
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
@@ -48,6 +160,7 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <!-- ── Empty state ────────────────────────────────────────────────── -->
     <LinearLayout
         android:id="@+id/layout_empty"
         android:layout_width="wrap_content"
@@ -84,6 +197,7 @@
 
     </LinearLayout>
 
+    <!-- ── Error / connection state ───────────────────────────────────── -->
     <LinearLayout
         android:id="@+id/layout_error"
         android:layout_width="match_parent"

@@ -69,19 +69,26 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
     }
 
     private void populateEventDetail(Event event) {
-        binding.collapsingToolbar.setTitle(event.getTitle());
-        binding.textEventTitle.setText(event.getTitle());
-        binding.chipCategory.setText(event.getCategory());
-        binding.textEventDate.setText(formatDateTime(event.getDate(), event.getTime()));
-        binding.textVenueName.setText(event.getVenueName());
-        binding.textVenueAddress.setText(event.getVenueAddress());
-        binding.textEventDescription.setText(event.getDescription());
+        binding.collapsingToolbar.setTitle(event.getName());
+        binding.textEventTitle.setText(event.getName());
+
+        // Category chip
+        String cat = event.getEventType();
+        if (cat == null || cat.isEmpty()) cat = event.getScheduleType();
+        binding.chipCategory.setText(cat != null ? cat.replace("_", " ") : "");
+
+        binding.textEventDate.setText(formatDateTime(event.getFirstDate(), event.getFirstStartTime()));
+        binding.textVenueName.setText(event.getVenueName() != null ? event.getVenueName() : "");
+        binding.textVenueAddress.setText(event.getVenueAddress() != null ? event.getVenueAddress() : "");
+        binding.textEventDescription.setText(event.getDescription() != null ? event.getDescription() : "");
+
+        double price = event.getLowestPrice();
         binding.textPrice.setText(event.isFree()
                 ? getString(R.string.label_free)
-                : String.format(getString(R.string.format_price), event.getPrice())
+                : String.format(java.util.Locale.US, "LKR %,.0f", price)
         );
         Glide.with(this)
-                .load(event.getImageUrl())
+                .load(event.getImage())
                 .placeholder(R.drawable.ic_event_placeholder)
                 .centerCrop()
                 .into(binding.imageEventBanner);
@@ -97,11 +104,15 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        if (currentEvent == null) return;
-        LatLng venueLocation = new LatLng(
-                currentEvent.getVenueLatitude(),
-                currentEvent.getVenueLongitude()
-        );
+        if (currentEvent == null || currentEvent.getLocation() == null) return;
+        double lat, lng;
+        try {
+            lat = Double.parseDouble(currentEvent.getLocation().getLatitude());
+            lng = Double.parseDouble(currentEvent.getLocation().getLongitude());
+        } catch (NumberFormatException | NullPointerException e) {
+            return;
+        }
+        LatLng venueLocation = new LatLng(lat, lng);
         googleMap.addMarker(new MarkerOptions()
                 .position(venueLocation)
                 .title(currentEvent.getVenueName())
@@ -114,10 +125,29 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
         // PayHere integration will be added later
     }
 
-    private String formatDateTime(String date, String time) {
-        if (date == null) return "";
-        if (time == null) return date;
-        return date + " • " + time;
+    private String formatDateTime(String isoDate, String isoTime) {
+        String source = isoTime != null ? isoTime : isoDate;
+        if (source == null) return "";
+        try {
+            java.text.SimpleDateFormat in =
+                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US);
+            java.text.SimpleDateFormat outDate =
+                new java.text.SimpleDateFormat("MMM d, yyyy", java.util.Locale.US);
+            java.text.SimpleDateFormat outTime =
+                new java.text.SimpleDateFormat("h:mm a", java.util.Locale.US);
+            java.util.Date parsed = in.parse(source);
+            if (parsed == null) return source;
+            if (isoTime != null && isoDate != null) {
+                try {
+                    java.util.Date dateParsed = in.parse(isoDate);
+                    if (dateParsed != null)
+                        return outDate.format(dateParsed) + " • " + outTime.format(parsed);
+                } catch (java.text.ParseException ignored) {}
+            }
+            return isoTime != null ? outTime.format(parsed) : outDate.format(parsed);
+        } catch (java.text.ParseException e) {
+            return source;
+        }
     }
 
     @Override

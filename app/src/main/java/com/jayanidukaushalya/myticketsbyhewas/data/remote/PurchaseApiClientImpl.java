@@ -2,6 +2,7 @@ package com.jayanidukaushalya.myticketsbyhewas.data.remote;
 
 import androidx.annotation.NonNull;
 
+import com.jayanidukaushalya.myticketsbyhewas.data.model.ApiListData;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ApiResponse;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ConfirmPurchaseRequest;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Purchase;
@@ -9,7 +10,10 @@ import com.jayanidukaushalya.myticketsbyhewas.data.model.PurchaseResponse;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ReservationResponse;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ReserveTicketsRequest;
 
+import java.util.Collections;
 import java.util.List;
+
+import com.jayanidukaushalya.myticketsbyhewas.BuildConfig;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -25,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class PurchaseApiClientImpl implements PurchaseApiClient {
 
-    private static final String BASE_URL = "https://api.myticketsbyhewas.com/";
+    private static final String BASE_URL = BuildConfig.API_BASE_URL;
     private static PurchaseApiClientImpl instance;
     private final PurchaseApiService apiService;
 
@@ -133,13 +137,17 @@ public class PurchaseApiClientImpl implements PurchaseApiClient {
 
         String authHeader = "Bearer " + token;
 
-        apiService.getPurchaseHistory(authHeader).enqueue(new Callback<ApiResponse<List<Purchase>>>() {
+        apiService.getPurchaseHistory(authHeader).enqueue(new Callback<ApiResponse<ApiListData<Purchase>>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiResponse<List<Purchase>>> call, @NonNull Response<ApiResponse<List<Purchase>>> response) {
+            public void onResponse(
+                    @NonNull Call<ApiResponse<ApiListData<Purchase>>> call,
+                    @NonNull Response<ApiResponse<ApiListData<Purchase>>> response
+            ) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<List<Purchase>> apiResponse = response.body();
+                    ApiResponse<ApiListData<Purchase>> apiResponse = response.body();
                     if (apiResponse.isSuccess() && apiResponse.getData() != null) {
-                        callback.onSuccess(apiResponse.getData());
+                        List<Purchase> list = apiResponse.getData().getResults();
+                        callback.onSuccess(list != null ? list : Collections.emptyList());
                     } else {
                         String errorMessage = apiResponse.getError() != null ? apiResponse.getError() : "Failed to retrieve purchase history";
                         callback.onFailure(errorMessage);
@@ -150,7 +158,7 @@ public class PurchaseApiClientImpl implements PurchaseApiClient {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ApiResponse<List<Purchase>>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ApiResponse<ApiListData<Purchase>>> call, @NonNull Throwable t) {
                 callback.onFailure("Network error: " + t.getMessage());
             }
         });

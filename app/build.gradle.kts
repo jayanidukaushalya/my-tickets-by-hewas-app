@@ -21,6 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders["MAPS_API_KEY"] = project.findProperty("MAPS_API_KEY") ?: ""
+        buildConfigField("String", "API_BASE_URL", "\"${project.findProperty("API_BASE_URL")?.toString() ?: "http://10.0.2.2:3000/api/"}\"")
     }
 
     buildTypes {
@@ -38,6 +39,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

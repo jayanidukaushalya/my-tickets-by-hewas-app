@@ -12,6 +12,16 @@
     <string name="label_no_events">No events available right now.\nCheck back soon!</string>
     <string name="label_loading_events">Loading events…</string>
     <string name="action_retry">Retry</string>
+    <string name="hint_search_events">Search events…</string>
+
+    <!-- Filter chip labels -->
+    <string name="filter_conference">Conference</string>
+    <string name="filter_festival">Festival</string>
+    <string name="filter_concert">Concert</string>
+    <string name="filter_sport">Sport</string>
+    <string name="filter_exhibition">Exhibition</string>
+    <string name="filter_single_day">Single Day</string>
+    <string name="filter_multi_day">Multi Day</string>
 
     <!-- Event detail -->
     <string name="title_event_detail">Event Details</string>

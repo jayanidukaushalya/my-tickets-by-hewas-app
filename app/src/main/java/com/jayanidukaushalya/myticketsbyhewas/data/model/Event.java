@@ -2,60 +2,93 @@ package com.jayanidukaushalya.myticketsbyhewas.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Event {
 
     @SerializedName("id")
     private String id;
 
-    @SerializedName("title")
-    private String title;
+    @SerializedName("name")
+    private String name;
 
     @SerializedName("description")
     private String description;
 
-    @SerializedName("date")
-    private String date;
+    @SerializedName("image")
+    private String image;
 
-    @SerializedName("time")
-    private String time;
+    @SerializedName("eventType")
+    private String eventType;
 
-    @SerializedName("venue_name")
-    private String venueName;
+    @SerializedName("scheduleType")
+    private String scheduleType;
 
-    @SerializedName("venue_address")
-    private String venueAddress;
+    @SerializedName("languages")
+    private String languages;
 
-    @SerializedName("venue_latitude")
-    private double venueLatitude;
+    @SerializedName("eventDates")
+    private List<EventDate> eventDates;
 
-    @SerializedName("venue_longitude")
-    private double venueLongitude;
+    @SerializedName("location")
+    private EventLocation location;
 
-    @SerializedName("image_url")
-    private String imageUrl;
-
-    @SerializedName("price")
-    private double price;
-
-    @SerializedName("category")
-    private String category;
-
-    @SerializedName("available_tickets")
-    private int availableTickets;
+    // ── Convenience helpers ──────────────────────────────────────────────────
 
     public String getId() { return id; }
-    public String getTitle() { return title; }
+    public String getName() { return name; }
     public String getDescription() { return description; }
-    public String getDate() { return date; }
-    public String getTime() { return time; }
-    public String getVenueName() { return venueName; }
-    public String getVenueAddress() { return venueAddress; }
-    public double getVenueLatitude() { return venueLatitude; }
-    public double getVenueLongitude() { return venueLongitude; }
-    public String getImageUrl() { return imageUrl; }
-    public double getPrice() { return price; }
-    public String getCategory() { return category; }
-    public int getAvailableTickets() { return availableTickets; }
+    public String getImage() { return image; }
+    public String getEventType() { return eventType; }
+    public String getScheduleType() { return scheduleType; }
+    public String getLanguages() { return languages; }
+    public List<EventDate> getEventDates() { return eventDates; }
+    public EventLocation getLocation() { return location; }
 
-    public boolean isFree() { return price <= 0; }
+    /** Returns the ISO date string of the first event date, or null. */
+    public String getFirstDate() {
+        if (eventDates == null || eventDates.isEmpty()) return null;
+        return eventDates.get(0).getDate();
+    }
+
+    /** Returns the startTime of the first time slot of the first date, or null. */
+    public String getFirstStartTime() {
+        if (eventDates == null || eventDates.isEmpty()) return null;
+        List<EventTimeSlot> slots = eventDates.get(0).getTimeSlots();
+        if (slots == null || slots.isEmpty()) return null;
+        return slots.get(0).getStartTime();
+    }
+
+    /** Returns the venue name from the nested location, or null. */
+    public String getVenueName() {
+        return location != null ? location.getVenue() : null;
+    }
+
+    /** Returns the venue address from the nested location, or null. */
+    public String getVenueAddress() {
+        return location != null ? location.getAddress() : null;
+    }
+
+    /**
+     * Returns the lowest ticket price across all dates/slots, or 0 if none.
+     * The API returns price as a String (e.g. "50000").
+     */
+    public double getLowestPrice() {
+        if (eventDates == null) return 0;
+        double min = Double.MAX_VALUE;
+        boolean found = false;
+        for (EventDate date : eventDates) {
+            if (date.getTimeSlots() == null) continue;
+            for (EventTimeSlot slot : date.getTimeSlots()) {
+                if (slot.getTickets() == null) continue;
+                for (EventTicket ticket : slot.getTickets()) {
+                    double p = ticket.getPriceAsDouble();
+                    if (p < min) { min = p; found = true; }
+                }
+            }
+        }
+        return found ? min : 0;
+    }
+
+    public boolean isFree() { return getLowestPrice() <= 0; }
 }

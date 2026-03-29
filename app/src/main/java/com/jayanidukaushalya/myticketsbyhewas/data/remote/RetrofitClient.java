@@ -1,5 +1,7 @@
 package com.jayanidukaushalya.myticketsbyhewas.data.remote;
 
+import com.jayanidukaushalya.myticketsbyhewas.BuildConfig;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -7,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "https://api.myticketsbyhewas.com/v1/";
+    private static final String BASE_URL = BuildConfig.API_BASE_URL;
 
     private static RetrofitClient instance;
     private final ApiService apiService;

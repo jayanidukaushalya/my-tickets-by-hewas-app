@@ -11,8 +11,12 @@ import com.jayanidukaushalya.myticketsbyhewas.R;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Event;
 import com.jayanidukaushalya.myticketsbyhewas.databinding.ItemEventCardBinding;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
@@ -63,29 +67,72 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
 
         void bind(Event event) {
-            binding.textEventTitle.setText(event.getTitle());
-            binding.textEventDate.setText(formatDateTime(event.getDate(), event.getTime()));
-            binding.textEventVenue.setText(event.getVenueName());
+            // Title
+            binding.textEventTitle.setText(event.getName());
+
+            // Category chip — show eventType, fall back to scheduleType
+            String category = event.getEventType();
+            if (category == null || category.isEmpty()) category = event.getScheduleType();
+            binding.chipCategory.setText(category != null ? category.replace("_", " ") : "");
+
+            // Date — parse the ISO date from the first eventDate entry
+            binding.textEventDate.setText(formatDate(event.getFirstDate(), event.getFirstStartTime()));
+
+            // Venue — nested location.venue
+            String venue = event.getVenueName();
+            binding.textEventVenue.setText(venue != null ? venue : "");
+
+            // Price — derived from nested tickets
             binding.textEventPrice.setText(formatPrice(event));
-            binding.chipCategory.setText(event.getCategory());
+
+            // Banner image
             Glide.with(binding.imageEventBanner.getContext())
-                    .load(event.getImageUrl())
+                    .load(event.getImage())
                     .placeholder(R.drawable.ic_event_placeholder)
                     .centerCrop()
                     .into(binding.imageEventBanner);
+
             binding.getRoot().setOnClickListener(v -> listener.onEventClick(event));
             binding.buttonBuy.setOnClickListener(v -> listener.onBuyClick(event));
         }
 
-        private String formatDateTime(String date, String time) {
-            if (date == null) return "";
-            if (time == null) return date;
-            return date + " • " + time;
+        /**
+         * Formats an ISO-8601 date+time pair into a human-readable string.
+         * e.g. "Mar 25, 2026 • 10:30 AM"
+         */
+        private String formatDate(String isoDate, String isoTime) {
+            // Try to use the time field first as it carries the most precise info
+            String source = isoTime != null ? isoTime : isoDate;
+            if (source == null) return "";
+            try {
+                SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+                SimpleDateFormat outDate = new SimpleDateFormat("MMM d, yyyy", Locale.US);
+                SimpleDateFormat outTime = new SimpleDateFormat("h:mm a", Locale.US);
+                Date parsed = in.parse(source);
+                if (parsed == null) return source;
+                if (isoTime != null) {
+                    // If we have a date too, show both with bullet separator
+                    if (isoDate != null) {
+                        try {
+                            Date dateParsed = in.parse(isoDate);
+                            if (dateParsed != null) {
+                                return outDate.format(dateParsed) + " • " + outTime.format(parsed);
+                            }
+                        } catch (ParseException ignored) {}
+                    }
+                    return outTime.format(parsed);
+                }
+                return outDate.format(parsed);
+            } catch (ParseException e) {
+                return source;
+            }
         }
 
         private String formatPrice(Event event) {
             if (event.isFree()) return "Free";
-            return String.format("LKR %.2f", event.getPrice());
+            double p = event.getLowestPrice();
+            // Format with thousands separator: e.g. "LKR 50,000"
+            return String.format(Locale.US, "LKR %,.0f", p);
         }
     }
 }

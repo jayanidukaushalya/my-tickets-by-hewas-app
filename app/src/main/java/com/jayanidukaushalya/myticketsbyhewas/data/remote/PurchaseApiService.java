@@ -1,13 +1,12 @@
 package com.jayanidukaushalya.myticketsbyhewas.data.remote;
 
+import com.jayanidukaushalya.myticketsbyhewas.data.model.ApiListData;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ApiResponse;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ConfirmPurchaseRequest;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Purchase;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.PurchaseResponse;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ReservationResponse;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.ReserveTicketsRequest;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -56,7 +55,7 @@ public interface PurchaseApiService {
      * @return API response containing the list of purchases
      */
     @GET("api/purchases/history")
-    Call<ApiResponse<List<Purchase>>> getPurchaseHistory(
+    Call<ApiResponse<ApiListData<Purchase>>> getPurchaseHistory(
             @Header("Authorization") String authToken
     );
 }
