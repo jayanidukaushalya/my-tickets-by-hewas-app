@@ -78,6 +78,8 @@ dependencies {
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
 
+    implementation("com.google.zxing:core:3.5.3")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

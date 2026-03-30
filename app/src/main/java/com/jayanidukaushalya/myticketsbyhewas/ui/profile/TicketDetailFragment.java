@@ -1,7 +1,6 @@
 package com.jayanidukaushalya.myticketsbyhewas.ui.profile;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.jayanidukaushalya.myticketsbyhewas.R;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Ticket;
+import com.jayanidukaushalya.myticketsbyhewas.util.QrCodeUtils;
 import com.jayanidukaushalya.myticketsbyhewas.databinding.FragmentTicketDetailBinding;
 import com.jayanidukaushalya.myticketsbyhewas.viewmodel.ProfileViewModel;
 
@@ -87,6 +87,7 @@ public class TicketDetailFragment extends Fragment {
 
     private void renderTicketUiFromArgs(Bundle args) {
         renderTicketUi(
+                args.getString("ticketId"),
                 args.getString("eventId"),
                 args.getString("eventTitle"),
                 args.getString("eventDate"),
@@ -101,6 +102,7 @@ public class TicketDetailFragment extends Fragment {
 
     private void renderTicketUiFromTicket(Ticket ticket) {
         renderTicketUi(
+                ticket.getId(),
                 ticket.getEventId(),
                 ticket.getEventTitle(),
                 ticket.getEventDate(),
@@ -114,6 +116,7 @@ public class TicketDetailFragment extends Fragment {
     }
 
     private void renderTicketUi(
+            @Nullable String ticketId,
             @Nullable String eventId,
             @Nullable String eventTitle,
             @Nullable String eventDate,
@@ -144,26 +147,11 @@ public class TicketDetailFragment extends Fragment {
             binding.layoutLocation.setVisibility(View.GONE);
         }
 
-        // White square QR placeholder.
-        binding.imageQrCode.setImageDrawable(null);
+        // Generate QR from raw ticketId only.
+        setQr(ticketId);
 
         applyStatusStyle(status != null ? status : Ticket.STATUS_EXPIRED);
 
-        if (eventLocation != null && !eventLocation.isEmpty()) {
-            binding.buttonOpenInMaps.setVisibility(View.VISIBLE);
-            binding.buttonOpenInMaps.setOnClickListener(v -> {
-                String uriString = "geo:0,0?q=" + Uri.encode(eventLocation);
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
-                intent.setPackage("com.google.android.apps.maps");
-                if (intent.resolveActivity(requireContext().getPackageManager()) == null) {
-                    intent.setPackage(null);
-                }
-                startActivity(intent);
-            });
-        } else {
-            binding.buttonOpenInMaps.setVisibility(View.GONE);
-            binding.buttonOpenInMaps.setOnClickListener(null);
-        }
 
         if (eventId != null && !eventId.isEmpty()) {
             binding.buttonViewEvent.setOnClickListener(v -> {
@@ -173,6 +161,18 @@ public class TicketDetailFragment extends Fragment {
             });
         } else {
             binding.buttonViewEvent.setOnClickListener(null);
+        }
+    }
+
+    private void setQr(@Nullable String ticketId) {
+        // Keep QR area as white square via the FrameLayout background.
+        binding.imageQrCode.setImageDrawable(null);
+        if (ticketId == null || ticketId.trim().isEmpty()) return;
+
+        // Fixed size so the QR is crisp and scannable.
+        Bitmap bitmap = QrCodeUtils.generateQrBitmap(ticketId, 600);
+        if (bitmap != null) {
+            binding.imageQrCode.setImageBitmap(bitmap);
         }
     }
 
