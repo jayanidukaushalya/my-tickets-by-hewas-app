@@ -61,6 +61,20 @@ public class Ticket {
     public int getQty() { return qty; }
     public String getEventLocation() { return eventLocation; }
 
+    public void setId(String id) { this.id = id; }
+    public void setEventId(String eventId) { this.eventId = eventId; }
+    public void setEventTitle(String eventTitle) { this.eventTitle = eventTitle; }
+    public void setEventDate(String eventDate) { this.eventDate = eventDate; }
+    public void setEventImageUrl(String eventImageUrl) { this.eventImageUrl = eventImageUrl; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public void setTicketName(String ticketName) { this.ticketName = ticketName; }
+    public void setPurchaseDate(String purchaseDate) { this.purchaseDate = purchaseDate; }
+    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
+    public void setStatus(String status) { this.status = status; }
+    public void setPrice(double price) { this.price = price; }
+    public void setQty(int qty) { this.qty = qty; }
+    public void setEventLocation(String eventLocation) { this.eventLocation = eventLocation; }
+
     public boolean isValid() { return STATUS_VALID.equals(status); }
     public boolean isUsed() { return STATUS_USED.equals(status); }
     public boolean isExpired() { return STATUS_EXPIRED.equals(status); }

@@ -35,7 +35,7 @@ public class ProfileViewModel extends AndroidViewModel {
     public ProfileViewModel(@NonNull Application application) {
         super(application);
         firebaseAuth = FirebaseAuth.getInstance();
-        ticketRepository = new TicketRepository();
+        ticketRepository = new TicketRepository(application);
         customerApi = CustomerApiClientImpl.getInstance();
         currentUser.setValue(firebaseAuth.getCurrentUser());
     }
@@ -80,7 +80,7 @@ public class ProfileViewModel extends AndroidViewModel {
         isLoading.setValue(true);
         user.getIdToken(false).addOnSuccessListener(result -> {
             String token = result.getToken();
-            ticketRepository.fetchUserTickets(
+            ticketRepository.syncAndLoadUserTickets(
                     user.getUid(),
                     token,
                     userTickets,
@@ -91,6 +91,11 @@ public class ProfileViewModel extends AndroidViewModel {
             isLoading.postValue(false);
             errorMessage.postValue(e.getMessage());
         });
+    }
+
+    /** Look up a single ticket from the local cache. Used by TicketDetailFragment. */
+    public void loadCachedTicket(String ticketId, MutableLiveData<Ticket> ticketData) {
+        ticketRepository.getTicketById(ticketId, ticketData);
     }
 
     public void updateCustomerProfile(String firstName, String lastName, String phone) {
@@ -130,6 +135,10 @@ public class ProfileViewModel extends AndroidViewModel {
     }
 
     public void signOut() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            ticketRepository.clearCacheForUser(user.getUid());
+        }
         firebaseAuth.signOut();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getApplication().getString(R.string.default_web_client_id))

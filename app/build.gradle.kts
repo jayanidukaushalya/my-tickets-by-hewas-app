@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+   alias(libs.plugins.android.application)
+   id("com.google.gms.google-services")
 }
 
 android {
@@ -74,6 +74,9 @@ dependencies {
 
     implementation(libs.google.maps)
     implementation("com.github.PayHereDevs:payhere-android-sdk:v3.0.17")
+
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -21,7 +21,7 @@ public class AdminViewModel extends AndroidViewModel {
 
     public AdminViewModel(@NonNull Application application) {
         super(application);
-        ticketRepository = new TicketRepository();
+        ticketRepository = new TicketRepository(application);
         firebaseAuth = FirebaseAuth.getInstance();
     }
 

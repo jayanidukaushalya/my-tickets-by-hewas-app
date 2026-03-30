@@ -69,6 +69,7 @@
     <string name="action_sign_in">Sign In</string>
     <string name="action_sign_out">Sign Out</string>
     <string name="label_my_tickets">My Tickets</string>
+    <string name="label_offline_tickets_note">Your tickets are available on offline mode.</string>
     <string name="label_no_tickets">You haven\'t purchased any tickets yet.</string>
     <string name="label_browse_events">Browse Events</string>
     <string name="label_profile_account">Account</string>
@@ -114,6 +115,12 @@
     <string name="label_ticket_status_used">Used</string>
     <string name="label_ticket_status_expired">Expired</string>
     <string name="label_purchased_on">Purchased: %s</string>
+    <string name="label_qr_code">Ticket QR Code</string>
+    <string name="label_purchase_summary">Purchase Summary</string>
+    <string name="label_purchase_date">Purchase Date</string>
+    <string name="label_total_paid">Total Paid</string>
+    <string name="action_view_original_event">View Original Event</string>
+    <string name="title_ticket_details">Ticket Details</string>
 
     <!-- Generic -->
     <string name="label_error">Something went wrong. Please try again.</string>

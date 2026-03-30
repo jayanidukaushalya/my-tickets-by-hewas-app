@@ -71,6 +71,19 @@ public class ProfileFragment extends Fragment {
         ticketAdapter.setOnTicketClickListener(ticket -> {
             Bundle args = new Bundle();
             args.putString("ticketId", ticket.getId());
+            // Pass full ticket snapshot so Ticket Details does not need
+            // a network call (and avoids marking the ticket as "used").
+            args.putString("eventId", ticket.getEventId());
+            args.putString("eventTitle", ticket.getEventTitle());
+            args.putString("eventDate", ticket.getEventDate());
+            args.putString("eventImageUrl", ticket.getEventImageUrl());
+            args.putString("purchaseDate", ticket.getPurchaseDate());
+            args.putString("status", ticket.getStatus());
+            args.putDouble("price", ticket.getPrice());
+            args.putInt("qty", ticket.getQty());
+            args.putString("eventLocation", ticket.getEventLocation());
+            args.putString("ticketName", ticket.getTicketName());
+            args.putString("qrCode", ticket.getQrCode());
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_profile_to_ticket_detail, args);
         });
