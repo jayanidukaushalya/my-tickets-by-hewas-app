@@ -2,21 +2,19 @@ package com.jayanidukaushalya.myticketsbyhewas.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 /**
- * Request model for confirming a purchase.
+ * Request model for confirming a purchase after payment.
  */
 public class ConfirmPurchaseRequest {
 
-    @SerializedName("sessionIds")
-    private final List<String> sessionIds;
+    @SerializedName("orderSessionId")
+    private final String orderSessionId;
 
-    public ConfirmPurchaseRequest(List<String> sessionIds) {
-        this.sessionIds = sessionIds;
+    public ConfirmPurchaseRequest(String orderSessionId) {
+        this.orderSessionId = orderSessionId;
     }
 
-    public List<String> getSessionIds() {
-        return sessionIds;
+    public String getOrderSessionId() {
+        return orderSessionId;
     }
 }

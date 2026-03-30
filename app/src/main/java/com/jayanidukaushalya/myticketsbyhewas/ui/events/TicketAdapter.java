@@ -1,6 +1,7 @@
 package com.jayanidukaushalya.myticketsbyhewas.ui.events;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,15 @@ import java.util.List;
 public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketViewHolder> {
 
     private final List<Ticket> tickets = new ArrayList<>();
+    private OnTicketClickListener listener;
+
+    public interface OnTicketClickListener {
+        void onTicketClick(Ticket ticket);
+    }
+
+    public void setOnTicketClickListener(OnTicketClickListener listener) {
+        this.listener = listener;
+    }
 
     public void submitList(List<Ticket> newTickets) {
         tickets.clear();
@@ -31,7 +41,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
         ItemTicketCardBinding binding = ItemTicketCardBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false
         );
-        return new TicketViewHolder(binding);
+        return new TicketViewHolder(binding, listener);
     }
 
     @Override
@@ -47,15 +57,33 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
     static class TicketViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemTicketCardBinding binding;
+        private final OnTicketClickListener listener;
 
-        TicketViewHolder(ItemTicketCardBinding binding) {
+        TicketViewHolder(ItemTicketCardBinding binding, OnTicketClickListener listener) {
             super(binding.getRoot());
             this.binding = binding;
+            this.listener = listener;
         }
 
         void bind(Ticket ticket) {
+            binding.getRoot().setOnClickListener(v -> {
+                // Already used tickets should not be actionable.
+                if (ticket.isUsed()) return;
+                if (listener != null) listener.onTicketClick(ticket);
+            });
+            binding.getRoot().setEnabled(!ticket.isUsed());
+            binding.getRoot().setAlpha(ticket.isUsed() ? 0.6f : 1f);
             binding.textEventTitle.setText(ticket.getEventTitle());
             binding.textEventDate.setText(ticket.getEventDate());
+            
+            // Display ticket name (e.g., Regular, VIP) if available
+            if (ticket.getTicketName() != null && !ticket.getTicketName().isEmpty()) {
+                binding.textTicketName.setVisibility(View.VISIBLE);
+                binding.textTicketName.setText(ticket.getTicketName());
+            } else {
+                binding.textTicketName.setVisibility(View.GONE);
+            }
+            
             if (ticket.getPurchaseDate() != null) {
                 binding.textPurchaseDate.setText(
                         binding.getRoot().getContext().getString(
@@ -63,11 +91,15 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
                         )
                 );
             }
+            String pricePerTicket = binding.getRoot().getContext().getString(R.string.format_price, ticket.getPrice());
+            binding.textTicketQty.setText((ticket.getQty() == 1 ? "1 Ticket" : ticket.getQty() + " Tickets") + " | " + pricePerTicket);
+            
             Glide.with(binding.imageEventThumbnail.getContext())
                     .load(ticket.getEventImageUrl())
                     .placeholder(R.drawable.ic_event_placeholder)
                     .centerCrop()
                     .into(binding.imageEventThumbnail);
+
             applyStatusStyle(ticket);
         }
 
@@ -75,11 +107,14 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             int backgroundRes;
             int textColorRes;
             String statusLabel;
+
             if (ticket.isValid()) {
-                backgroundRes = R.drawable.bg_ticket_status_valid;
-                textColorRes = R.color.ticket_valid;
-                statusLabel = "Valid";
-            } else if (ticket.isUsed()) {
+                binding.textTicketStatus.setVisibility(View.GONE);
+                return;
+            }
+
+            binding.textTicketStatus.setVisibility(View.VISIBLE);
+            if (ticket.isUsed()) {
                 backgroundRes = R.drawable.bg_ticket_status_used;
                 textColorRes = R.color.ticket_used;
                 statusLabel = "Used";

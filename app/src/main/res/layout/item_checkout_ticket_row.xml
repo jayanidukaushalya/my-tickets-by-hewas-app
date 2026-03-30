@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/spacing_sm"
-    android:paddingBottom="@dimen/spacing_sm">
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/spacing_sm"
+    android:gravity="center_vertical">
 
-    <!-- Left: ticket type label + quantity -->
+    <!-- Left: Ticket Type -->
     <LinearLayout
-        android:id="@+id/layout_left"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_weight="1"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/text_item_qty_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            tools:text="2 X Entry Ticket" />
 
         <TextView
             android:id="@+id/text_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+            android:textColor="@color/price_gold"
             android:textStyle="bold"
-            tools:text="Entry Ticket (6,000)" />
+            tools:text="VIP" />
+
+        <TextView
+            android:id="@+id/text_item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:alpha="0.7"
+            tools:text="2 Tickets"
+            android:visibility="gone" />
 
     </LinearLayout>
 
-    <!-- Right: line total -->
+    <!-- Right: Count | Price -->
     <TextView
         android:id="@+id/text_item_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
         android:textColor="@color/price_gold"
         android:textStyle="bold"
-        tools:text="LKR 12,000" />
+        tools:text="2 × LKR 3,000.00" />
 
-</RelativeLayout>
+</LinearLayout>

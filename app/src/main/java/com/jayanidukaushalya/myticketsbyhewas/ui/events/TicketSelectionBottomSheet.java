@@ -331,6 +331,22 @@ public class TicketSelectionBottomSheet extends BottomSheetDialogFragment {
             }
             Bundle result = new Bundle();
             result.putString("ticketsJson", jsonArray.toString());
+            
+            // Add event data for checkout
+            if (event != null) {
+                result.putString("eventName", event.getName());
+                result.putString("eventImageUrl", event.getImage());
+            }
+            
+            // Add selected time slot data
+            if (selectedSlot != null) {
+                result.putString("eventDateTime", EventScheduleFormatter.formatDateTimeDisplay(
+                        selectedDate != null ? selectedDate.getDate() : null,
+                        null,
+                        selectedSlot.getStartTime()));
+                result.putString("eventVenue", event != null && event.getVenueName() != null ? event.getVenueName() : "");
+            }
+            
             getParentFragmentManager().setFragmentResult(RESULT_KEY, result);
             dismiss();
         } catch (Exception e) {

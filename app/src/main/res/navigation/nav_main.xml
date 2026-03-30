@@ -44,13 +44,39 @@
         <argument
             android:name="ticketsJson"
             app:argType="string" />
+        <action
+            android:id="@+id/action_checkout_to_ticket_detail"
+            app:destination="@id/nav_ticket_detail"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/nav_events" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.jayanidukaushalya.myticketsbyhewas.ui.profile.ProfileFragment"
         android:label="@string/nav_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_ticket_detail"
+            app:destination="@id/nav_ticket_detail"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_ticket_detail"
+        android:name="com.jayanidukaushalya.myticketsbyhewas.ui.profile.TicketDetailFragment"
+        android:label="Ticket Details"
+        tools:layout="@layout/fragment_ticket_detail">
+        <argument
+            android:name="ticketId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_admin"

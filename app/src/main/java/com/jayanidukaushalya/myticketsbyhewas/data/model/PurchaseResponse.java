@@ -2,74 +2,87 @@ package com.jayanidukaushalya.myticketsbyhewas.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
- * Response model for confirmed purchase.
+ * Response model for POST /tickets/purchase/confirm (paid order + line items).
  */
 public class PurchaseResponse {
 
-    @SerializedName("purchaseId")
-    private String purchaseId;
+    @SerializedName("orderId")
+    private String orderId;
 
-    @SerializedName("ticketId")
-    private String ticketId;
+    @SerializedName("purchases")
+    private List<ConfirmedLine> purchases;
 
-    @SerializedName("qty")
-    private int qty;
+    @SerializedName("count")
+    private int count;
 
-    @SerializedName("price")
-    private String price;
-
-    @SerializedName("isActivated")
-    private boolean isActivated;
-
-    @SerializedName("createdAt")
-    private String createdAt;
-
-    public String getPurchaseId() {
-        return purchaseId;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public void setPurchaseId(String purchaseId) {
-        this.purchaseId = purchaseId;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
-    public String getTicketId() {
-        return ticketId;
+    public List<ConfirmedLine> getPurchases() {
+        return purchases;
     }
 
-    public void setTicketId(String ticketId) {
-        this.ticketId = ticketId;
+    public void setPurchases(List<ConfirmedLine> purchases) {
+        this.purchases = purchases;
     }
 
-    public int getQty() {
-        return qty;
+    public int getCount() {
+        return count;
     }
 
-    public void setQty(int qty) {
-        this.qty = qty;
+    public void setCount(int count) {
+        this.count = count;
     }
 
-    public String getPrice() {
-        return price;
-    }
+    public static class ConfirmedLine {
+        @SerializedName("purchaseId")
+        private String purchaseId;
 
-    public void setPrice(String price) {
-        this.price = price;
-    }
+        @SerializedName("ticketId")
+        private String ticketId;
 
-    public boolean isActivated() {
-        return isActivated;
-    }
+        @SerializedName("qty")
+        private int qty;
 
-    public void setActivated(boolean activated) {
-        isActivated = activated;
-    }
+        @SerializedName("price")
+        private String price;
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
+        @SerializedName("isActivated")
+        private boolean isActivated;
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+        @SerializedName("createdAt")
+        private String createdAt;
+
+        public String getPurchaseId() {
+            return purchaseId;
+        }
+
+        public String getTicketId() {
+            return ticketId;
+        }
+
+        public int getQty() {
+            return qty;
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public boolean isActivated() {
+            return isActivated;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
     }
 }

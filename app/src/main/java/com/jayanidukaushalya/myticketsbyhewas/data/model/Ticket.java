@@ -11,25 +11,28 @@ public class Ticket {
     @SerializedName("id")
     private String id;
 
-    @SerializedName("event_id")
+    @SerializedName("eventId")
     private String eventId;
 
-    @SerializedName("event_title")
+    @SerializedName("eventTitle")
     private String eventTitle;
 
-    @SerializedName("event_date")
+    @SerializedName("eventDate")
     private String eventDate;
 
-    @SerializedName("event_image_url")
+    @SerializedName("eventImageUrl")
     private String eventImageUrl;
 
-    @SerializedName("user_id")
+    @SerializedName("userId")
     private String userId;
 
-    @SerializedName("purchase_date")
+    @SerializedName("ticketName")
+    private String ticketName;
+
+    @SerializedName("purchaseDate")
     private String purchaseDate;
 
-    @SerializedName("qr_code")
+    @SerializedName("qrCode")
     private String qrCode;
 
     @SerializedName("status")
@@ -38,16 +41,25 @@ public class Ticket {
     @SerializedName("price")
     private double price;
 
+    @SerializedName("qty")
+    private int qty;
+
+    @SerializedName("eventLocation")
+    private String eventLocation;
+
     public String getId() { return id; }
     public String getEventId() { return eventId; }
     public String getEventTitle() { return eventTitle; }
     public String getEventDate() { return eventDate; }
     public String getEventImageUrl() { return eventImageUrl; }
     public String getUserId() { return userId; }
+    public String getTicketName() { return ticketName; }
     public String getPurchaseDate() { return purchaseDate; }
     public String getQrCode() { return qrCode; }
     public String getStatus() { return status; }
     public double getPrice() { return price; }
+    public int getQty() { return qty; }
+    public String getEventLocation() { return eventLocation; }
 
     public boolean isValid() { return STATUS_VALID.equals(status); }
     public boolean isUsed() { return STATUS_USED.equals(status); }

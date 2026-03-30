@@ -218,8 +218,8 @@
                 android:id="@+id/recycler_tickets"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
                 android:layout_marginTop="@dimen/spacing_sm"
+                android:paddingHorizontal="@dimen/spacing_md"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
                 android:visibility="gone" />

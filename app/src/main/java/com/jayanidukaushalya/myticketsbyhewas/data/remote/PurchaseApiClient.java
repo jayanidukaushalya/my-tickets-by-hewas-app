@@ -19,9 +19,9 @@ public interface PurchaseApiClient {
     void reserveTicketsBulk(List<ReserveTicketsRequest.Item> items, String email, String firstName, String lastName, String phone, String token, ReservationCallback callback);
 
     /**
-     * Confirm one or more reserved sessions after payment (Step 2 of 2).
+     * Confirm the reserved checkout after payment (Step 2 of 2).
      */
-    void confirmPurchases(List<String> sessionIds, String token, PurchaseCallback callback);
+    void confirmPurchase(String orderSessionId, String token, PurchaseCallback callback);
 
     /**
      * Get purchase history for the authenticated user.

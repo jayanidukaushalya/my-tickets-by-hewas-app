@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -18,11 +19,14 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.jayanidukaushalya.myticketsbyhewas.R;
 import com.jayanidukaushalya.myticketsbyhewas.data.model.Customer;
+import com.jayanidukaushalya.myticketsbyhewas.data.model.Ticket;
 import com.jayanidukaushalya.myticketsbyhewas.databinding.DialogEditProfileBinding;
 import com.jayanidukaushalya.myticketsbyhewas.databinding.FragmentProfileBinding;
 import com.jayanidukaushalya.myticketsbyhewas.ui.auth.AuthActivity;
 import com.jayanidukaushalya.myticketsbyhewas.ui.events.TicketAdapter;
 import com.jayanidukaushalya.myticketsbyhewas.viewmodel.ProfileViewModel;
+
+import java.util.ArrayList;
 
 public class ProfileFragment extends Fragment {
 
@@ -64,6 +68,12 @@ public class ProfileFragment extends Fragment {
 
     private void setupRecyclerView() {
         ticketAdapter = new TicketAdapter();
+        ticketAdapter.setOnTicketClickListener(ticket -> {
+            Bundle args = new Bundle();
+            args.putString("ticketId", ticket.getId());
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_profile_to_ticket_detail, args);
+        });
         binding.recyclerTickets.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerTickets.setAdapter(ticketAdapter);
     }
@@ -83,7 +93,10 @@ public class ProfileFragment extends Fragment {
             } else {
                 binding.layoutNoTickets.setVisibility(View.GONE);
                 binding.recyclerTickets.setVisibility(View.VISIBLE);
-                ticketAdapter.submitList(tickets);
+                // Put already-used (activated) tickets at the bottom.
+                ArrayList<Ticket> sorted = new ArrayList<>(tickets);
+                sorted.sort((a, b) -> Boolean.compare(a.isUsed(), b.isUsed()));
+                ticketAdapter.submitList(sorted);
             }
         });
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), message -> {

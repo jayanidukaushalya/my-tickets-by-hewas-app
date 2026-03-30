@@ -275,8 +275,15 @@ public class EventDetailFragment extends Fragment implements OnMapReadyCallback 
     }
 
     private void navigateToCheckout(Bundle selection) {
+        if (currentEvent == null) return;
+        
         Bundle args = new Bundle();
         args.putString("ticketsJson", selection.getString("ticketsJson"));
+        args.putString("eventName", currentEvent.getName());
+        args.putString("eventImageUrl", currentEvent.getImage());
+        args.putString("eventDateTime", selection.getString("eventDateTime", ""));
+        args.putString("eventVenue", selection.getString("eventVenue", ""));
+        
         NavHostFragment.findNavController(this).navigate(
                 R.id.action_event_detail_to_checkout,
                 args

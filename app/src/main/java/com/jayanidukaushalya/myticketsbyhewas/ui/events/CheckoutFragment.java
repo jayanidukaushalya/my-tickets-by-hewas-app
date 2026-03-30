@@ -97,9 +97,22 @@ public class CheckoutFragment extends Fragment {
 
     // ── Arg parsing ─────────────────────────────────────────────────────────
 
+    private String eventName;
+    private String eventImageUrl;
+    private String eventDateTime;
+    private String eventVenue;
+
     private void parseArgs() {
         Bundle args = getArguments();
         if (args == null) return;
+        
+        // Parse event info
+        eventName = args.getString("eventName", "");
+        eventImageUrl = args.getString("eventImageUrl", "");
+        eventDateTime = args.getString("eventDateTime", "");
+        eventVenue = args.getString("eventVenue", "");
+        
+        // Parse tickets
         String json = args.getString("ticketsJson");
         if (json == null || json.isEmpty()) return;
         try {
@@ -136,6 +149,21 @@ public class CheckoutFragment extends Fragment {
             return;
         }
 
+        // Load event image
+        if (eventImageUrl != null && !eventImageUrl.isEmpty()) {
+            com.bumptech.glide.Glide.with(this)
+                    .load(eventImageUrl)
+                    .placeholder(R.drawable.ic_event_placeholder)
+                    .centerCrop()
+                    .into(binding.imageEventThumbnail);
+        }
+
+        // Set event info
+        binding.textEventName.setText(eventName != null ? eventName : "");
+        binding.textEventDatetime.setText(eventDateTime != null ? eventDateTime : "");
+        binding.textEventVenue.setText(eventVenue != null && !eventVenue.isEmpty() ? eventVenue : "");
+        binding.textEventVenue.setVisibility(eventVenue != null && !eventVenue.isEmpty() ? View.VISIBLE : View.GONE);
+
         LinearLayout container = binding.layoutTicketItems;
         container.removeAllViews();
 
@@ -143,25 +171,19 @@ public class CheckoutFragment extends Fragment {
 
         for (int i = 0; i < ticketItems.size(); i++) {
             TicketItem item = ticketItems.get(i);
-            double unitPrice = parsePrice(item.ticketPrice);
-            double lineTotal = unitPrice * item.qty;
-            grandTotal += lineTotal;
-
             ItemCheckoutTicketRowBinding row = ItemCheckoutTicketRowBinding.inflate(
                     LayoutInflater.from(requireContext()), container, false);
 
-            // "2 X Economy Ticket"
-            row.textItemQtyLabel.setText(item.qty + " × " + item.ticketName);
-            // "Economy Ticket (LKR 50,000)"
+            double unitPrice = parsePrice(item.ticketPrice);
+            grandTotal += unitPrice * item.qty;
+
+            row.textItemName.setText(item.ticketName);
+
             String priceFormatted = unitPrice > 0
-                    ? String.format(Locale.US, "LKR %,.0f", unitPrice)
+                    ? String.format(Locale.US, "LKR %,.2f", unitPrice)
                     : getString(R.string.label_free_ticket);
-            row.textItemName.setText(item.ticketName + " (" + priceFormatted + ")");
-            // Line total
-            String lineTotalText = lineTotal > 0
-                    ? String.format(Locale.US, "LKR %,.0f", lineTotal)
-                    : getString(R.string.label_free_ticket);
-            row.textItemTotal.setText(lineTotalText);
+
+            row.textItemTotal.setText(String.format(Locale.US, "%d × %s", item.qty, priceFormatted));
 
             container.addView(row.getRoot());
 
@@ -289,14 +311,14 @@ public class CheckoutFragment extends Fragment {
                                         @Override
                                         public void onFailure(String errorMessage) {
                                             setLoading(false);
-                                            Snackbar.make(binding.getRoot(), errorMessage, Snackbar.LENGTH_LONG).show();
+                                            showErrorSnackbar(errorMessage);
                                         }
                                     }
                             )
                     )
                     .addOnFailureListener(e -> {
                         setLoading(false);
-                        Snackbar.make(binding.getRoot(), "Authentication failed. Please sign in again.", Snackbar.LENGTH_LONG).show();
+                        showErrorSnackbar("Authentication failed. Please sign in again.");
                     });
         } else {
             purchaseApiClient.reserveTicketsBulk(
@@ -316,7 +338,7 @@ public class CheckoutFragment extends Fragment {
                         @Override
                         public void onFailure(String errorMessage) {
                             setLoading(false);
-                            Snackbar.make(binding.getRoot(), errorMessage, Snackbar.LENGTH_LONG).show();
+                            showErrorSnackbar(errorMessage);
                         }
                     }
             );
@@ -328,7 +350,7 @@ public class CheckoutFragment extends Fragment {
     private void startPayHerePayment(BuyerInfo buyerInfo, ReservationResponse reservation) {
         if (reservation == null || reservation.getPayment() == null) {
             setLoading(false);
-            Snackbar.make(binding.getRoot(), "Payment configuration is missing", Snackbar.LENGTH_LONG).show();
+            showErrorSnackbar("Payment configuration is missing");
             return;
         }
 
@@ -340,8 +362,7 @@ public class CheckoutFragment extends Fragment {
             grandTotal += parsePrice(item.ticketPrice) * item.qty;
         }
 
-        String sessionId = reservation.getSessionId();
-        List<String> sessionIds = reservation.getSessionIds();
+        String orderSessionId = reservation.getOrderSessionId();
 
         InitRequest req = new InitRequest();
         req.setMerchantId(payment.getMerchantId());
@@ -351,10 +372,8 @@ public class CheckoutFragment extends Fragment {
         req.setOrderId(payment.getOrderId() != null ? payment.getOrderId() : UUID.randomUUID().toString());
         req.setItemsDescription(buildItemsDescription());
         req.setNotifyUrl(payment.getNotifyUrl());
-        if (sessionIds != null && !sessionIds.isEmpty()) {
-            req.setCustom1(android.text.TextUtils.join(",", sessionIds));
-        } else if (sessionId != null) {
-            req.setCustom1(sessionId);
+        if (orderSessionId != null && !orderSessionId.isEmpty()) {
+            req.setCustom1(orderSessionId);
         }
 
         req.getCustomer().setFirstName(buyerInfo.firstName);
@@ -390,14 +409,14 @@ public class CheckoutFragment extends Fragment {
 
         if (data == null || !data.hasExtra(PHConstants.INTENT_EXTRA_RESULT)) {
             setLoading(false);
-            Snackbar.make(binding.getRoot(), "Payment cancelled", Snackbar.LENGTH_LONG).show();
+            showErrorSnackbar("Payment cancelled");
             return;
         }
 
         PHResponse response = (PHResponse) data.getSerializableExtra(PHConstants.INTENT_EXTRA_RESULT);
         if (response == null) {
             setLoading(false);
-            Snackbar.make(binding.getRoot(), "Payment cancelled", Snackbar.LENGTH_LONG).show();
+            showErrorSnackbar("Payment cancelled");
             return;
         }
 
@@ -408,13 +427,13 @@ public class CheckoutFragment extends Fragment {
 
         if (!paymentSuccess) {
             setLoading(false);
-            Snackbar.make(binding.getRoot(), "Payment was not completed", Snackbar.LENGTH_LONG).show();
+            showErrorSnackbar("Payment was not completed");
             return;
         }
 
         if (pendingReservation == null) {
             setLoading(false);
-            Snackbar.make(binding.getRoot(), "Purchase session is missing", Snackbar.LENGTH_LONG).show();
+            showErrorSnackbar("Purchase session is missing");
             return;
         }
 
@@ -422,38 +441,69 @@ public class CheckoutFragment extends Fragment {
         if (user != null) {
             user.getIdToken(false)
                     .addOnSuccessListener(tokenResult -> confirmAllPurchases(tokenResult.getToken()))
-                    .addOnFailureListener(e -> { setLoading(false); Snackbar.make(binding.getRoot(), "Failed to confirm purchase", Snackbar.LENGTH_LONG).show(); });
+                    .addOnFailureListener(e -> { setLoading(false); showErrorSnackbar("Failed to confirm purchase"); });
         } else {
             confirmAllPurchases(null);
         }
     }
 
     private void confirmAllPurchases(@Nullable String token) {
-        List<String> sessionIds = pendingReservation.getSessionIds();
-        if (sessionIds == null || sessionIds.isEmpty()) {
+        String orderSessionId = pendingReservation.getOrderSessionId();
+        if (orderSessionId == null || orderSessionId.isEmpty()) {
             setLoading(false);
-            Snackbar.make(binding.getRoot(), "Purchase session is missing", Snackbar.LENGTH_LONG).show();
+            showErrorSnackbar("Purchase session is missing");
             return;
         }
 
-        purchaseApiClient.confirmPurchases(sessionIds, token, new PurchaseApiClient.PurchaseCallback() {
+        purchaseApiClient.confirmPurchase(orderSessionId, token, new PurchaseApiClient.PurchaseCallback() {
             @Override
             public void onSuccess(PurchaseResponse purchase) {
-                onAllConfirmed();
+                String firstTicketId = null;
+                if (purchase != null && purchase.getPurchases() != null && !purchase.getPurchases().isEmpty()) {
+                    firstTicketId = purchase.getPurchases().get(0).getTicketId();
+                }
+                onAllConfirmed(firstTicketId);
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 setLoading(false);
-                Snackbar.make(binding.getRoot(), errorMessage, Snackbar.LENGTH_LONG).show();
+                showErrorSnackbar(errorMessage);
             }
         });
     }
 
-    private void onAllConfirmed() {
+    private void onAllConfirmed(@Nullable String newlyPurchasedTicketId) {
         setLoading(false);
-        Snackbar.make(binding.getRoot(), "Payment successful! Tickets purchased.", Snackbar.LENGTH_LONG).show();
-        NavHostFragment.findNavController(CheckoutFragment.this).navigateUp();
+        showSuccessSnackbar("Payment successful! Tickets purchased.");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null && newlyPurchasedTicketId != null) {
+            // Navigate directly to the new ticket detail screen
+            Bundle args = new Bundle();
+            args.putString("ticketId", newlyPurchasedTicketId);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_checkout_to_ticket_detail, args);
+        } else if (user != null) {
+            // Fallback: Navigate to profile list if ID missing
+            NavHostFragment.findNavController(this).navigate(R.id.nav_profile);
+        } else {
+            NavHostFragment.findNavController(this).navigateUp();
+        }
+    }
+
+    private void showSuccessSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG);
+        snackbar.setBackgroundTint(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.primary));
+        snackbar.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.on_primary));
+        snackbar.show();
+    }
+
+    private void showErrorSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG);
+        snackbar.setBackgroundTint(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.error));
+        snackbar.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.on_error));
+        snackbar.show();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

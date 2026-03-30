@@ -1,15 +1,14 @@
 package com.jayanidukaushalya.myticketsbyhewas.data.model;
 
 import com.google.gson.annotations.SerializedName;
-import java.util.List;
 
 /**
- * Response model for ticket reservation.
+ * Response model for ticket reservation (step 1).
  */
 public class ReservationResponse {
 
-    @SerializedName("sessionId")
-    private String sessionId;
+    @SerializedName("orderSessionId")
+    private String orderSessionId;
 
     @SerializedName("expireAt")
     private String expireAt;
@@ -17,21 +16,15 @@ public class ReservationResponse {
     @SerializedName("qty")
     private int qty;
 
-    @SerializedName("ticket")
-    private TicketInfo ticket;
-
     @SerializedName("payment")
     private PaymentInfo payment;
 
-    @SerializedName("sessionIds")
-    private List<String> sessionIds;
-
-    public String getSessionId() {
-        return sessionId;
+    public String getOrderSessionId() {
+        return orderSessionId;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setOrderSessionId(String orderSessionId) {
+        this.orderSessionId = orderSessionId;
     }
 
     public String getExpireAt() {
@@ -50,66 +43,12 @@ public class ReservationResponse {
         this.qty = qty;
     }
 
-    public TicketInfo getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(TicketInfo ticket) {
-        this.ticket = ticket;
-    }
-
     public PaymentInfo getPayment() {
         return payment;
     }
 
     public void setPayment(PaymentInfo payment) {
         this.payment = payment;
-    }
-
-    public List<String> getSessionIds() {
-        return sessionIds;
-    }
-
-    public void setSessionIds(List<String> sessionIds) {
-        this.sessionIds = sessionIds;
-    }
-
-    /**
-     * Nested ticket information in reservation response.
-     */
-    public static class TicketInfo {
-        @SerializedName("id")
-        private String id;
-
-        @SerializedName("name")
-        private String name;
-
-        @SerializedName("price")
-        private String price;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getPrice() {
-            return price;
-        }
-
-        public void setPrice(String price) {
-            this.price = price;
-        }
     }
 
     public static class PaymentInfo {

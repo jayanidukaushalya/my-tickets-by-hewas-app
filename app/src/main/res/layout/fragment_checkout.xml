@@ -38,7 +38,7 @@
                 app:cardBackgroundColor="@color/surface"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/outline_variant"
+                app:strokeColor="@color/outline"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -46,53 +46,72 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Top section: Event info -->
-                    <LinearLayout
+                    <!-- Header: Image with Text Overlay -->
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingStart="@dimen/spacing_md"
-                        android:paddingEnd="@dimen/spacing_md"
-                        android:paddingTop="@dimen/spacing_sm"
-                        android:paddingBottom="@dimen/spacing_sm">
+                        android:layout_height="160dp">
 
-                        <!-- Event name -->
-                        <TextView
-                            android:id="@+id/text_event_name"
+                        <ImageView
+                            android:id="@+id/image_event_thumbnail"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_event_placeholder"
+                            android:contentDescription="@null" />
+
+                        <!-- Gradient Overlay for readability -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_ticket_gradient_overlay" />
+
+                        <!-- Text Overlay -->
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                            android:textColor="@color/white"
-                            android:textStyle="bold"
-                            tools:text="The Saiko Show" />
+                            android:layout_gravity="bottom"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_md">
 
-                        <!-- Date & venue -->
-                        <TextView
-                            android:id="@+id/text_event_datetime"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            tools:text="Sat, 18 Apr, 2026 | 07:00 PM" />
+                            <TextView
+                                android:id="@+id/text_event_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                                android:textColor="@color/white"
+                                android:textStyle="bold"
+                                tools:text="The Saiko Show" />
 
-                        <TextView
-                            android:id="@+id/text_event_venue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            tools:text="BMICH, Colombo" />
+                            <TextView
+                                android:id="@+id/text_event_datetime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                android:textColor="@color/white"
+                                android:alpha="0.9"
+                                tools:text="Sat, 18 Apr | 07:00 PM" />
 
-                    </LinearLayout>
+                            <TextView
+                                android:id="@+id/text_event_venue"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                                android:textColor="@color/white"
+                                android:alpha="0.85"
+                                tools:text="BMICH, Colombo" />
 
-                    <!-- Simple Separator -->
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                    <!-- Dashed Divider -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:background="@drawable/bg_dashed_divider"
@@ -104,10 +123,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingStart="@dimen/spacing_md"
-                        android:paddingEnd="@dimen/spacing_md"
-                        android:paddingTop="@dimen/spacing_sm"
-                        android:paddingBottom="@dimen/spacing_md">
+                        android:padding="@dimen/spacing_md">
 
                         <!-- Ticket item rows are added here dynamically -->
 

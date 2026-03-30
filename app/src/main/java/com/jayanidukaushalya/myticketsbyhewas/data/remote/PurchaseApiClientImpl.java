@@ -98,8 +98,8 @@ public class PurchaseApiClientImpl implements PurchaseApiClient {
     }
 
     @Override
-    public void confirmPurchases(List<String> sessionIds, String token, PurchaseCallback callback) {
-        ConfirmPurchaseRequest request = new ConfirmPurchaseRequest(sessionIds);
+    public void confirmPurchase(String orderSessionId, String token, PurchaseCallback callback) {
+        ConfirmPurchaseRequest request = new ConfirmPurchaseRequest(orderSessionId);
         String authHeader = (token != null && !token.isEmpty()) ? "Bearer " + token : null;
 
         apiService.confirmPurchase(authHeader, request).enqueue(new Callback<ApiResponse<PurchaseResponse>>() {
