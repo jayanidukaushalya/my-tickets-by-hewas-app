@@ -16,6 +16,9 @@ public class ReservationResponse {
     @SerializedName("qty")
     private int qty;
 
+    @SerializedName("totalAmount")
+    private String totalAmount;
+
     @SerializedName("payment")
     private PaymentInfo payment;
 
@@ -41,6 +44,14 @@ public class ReservationResponse {
 
     public void setQty(int qty) {
         this.qty = qty;
+    }
+
+    public String getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public PaymentInfo getPayment() {

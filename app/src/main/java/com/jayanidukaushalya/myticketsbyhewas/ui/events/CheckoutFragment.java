@@ -356,10 +356,14 @@ public class CheckoutFragment extends Fragment {
 
         ReservationResponse.PaymentInfo payment = reservation.getPayment();
 
-        // Compute grand total across all reservations
-        double grandTotal = 0;
-        for (TicketItem item : ticketItems) {
-            grandTotal += parsePrice(item.ticketPrice) * item.qty;
+        // Use the amount from the API response (already calculated on backend)
+        double amount = 0;
+        try {
+            amount = Double.parseDouble(payment.getAmount());
+        } catch (NumberFormatException e) {
+            setLoading(false);
+            showErrorSnackbar("Invalid payment amount");
+            return;
         }
 
         String orderSessionId = reservation.getOrderSessionId();
@@ -368,7 +372,7 @@ public class CheckoutFragment extends Fragment {
         req.setMerchantId(payment.getMerchantId());
         req.setMerchantSecret(payment.getMerchantSecret());
         req.setCurrency(payment.getCurrency());
-        req.setAmount(grandTotal);
+        req.setAmount(amount);
         req.setOrderId(payment.getOrderId() != null ? payment.getOrderId() : UUID.randomUUID().toString());
         req.setItemsDescription(buildItemsDescription());
         req.setNotifyUrl(payment.getNotifyUrl());
@@ -420,14 +424,20 @@ public class CheckoutFragment extends Fragment {
             return;
         }
 
-        String responseJson = gson.toJson(response).toUpperCase(Locale.US);
-        boolean paymentSuccess = responseJson.contains("SUCCESS")
-                || responseJson.contains("\"CODE\":1")
-                || responseJson.contains("\"CODE\":2");
+        String responseJson = gson.toJson(response);
+        String responseJsonUpper = responseJson.toUpperCase(Locale.US);
+        boolean paymentSuccess = responseJsonUpper.contains("SUCCESS")
+                || responseJsonUpper.contains("\"CODE\":1")
+                || responseJsonUpper.contains("\"CODE\":2");
 
         if (!paymentSuccess) {
             setLoading(false);
-            showErrorSnackbar("Payment was not completed");
+            String errorMsg = "Payment was not completed";
+            Object responseData = response.getData();
+            if (responseData != null && !responseData.toString().isEmpty()) {
+                errorMsg = responseData.toString();
+            }
+            showErrorSnackbar(errorMsg);
             return;
         }
 
